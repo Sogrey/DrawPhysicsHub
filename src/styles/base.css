@@ -662,6 +662,10 @@ body,
   cursor: grabbing;
 }
 
+.viewport.dark:has(.hud-bar) canvas {
+  cursor: default;
+}
+
 .hud-legend {
   position: absolute;
   z-index: 5;
