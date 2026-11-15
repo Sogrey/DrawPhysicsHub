@@ -1,0 +1,26 @@
+/** 壳层中文文案（演示物理文案仍在各 DemoMeta） */
+export const zh = {
+  'app.tag': '物理模型层 · 渲染层',
+  'catalog.title': '演示目录',
+  'catalog.lead': '按学科与分类浏览；支持搜索与标签过滤。未实现条目标「敬请期待」。',
+  'catalog.search': '搜索标题、分类、标签…',
+  'catalog.subjectAll': '全部学科',
+  'catalog.tagAll': '全部标签',
+  'catalog.empty': '无匹配演示',
+  'catalog.count': '{n} 个演示',
+  'catalog.countMix': '可玩 {live} · 敬请期待 {soon}',
+  'catalog.open': '打开演示',
+  'catalog.soon': '敬请期待',
+  'catalog.soonHint': '内容规划中',
+  'error.title': '演示加载失败',
+  'error.missing': '未找到演示：{id}',
+  'error.retry': '重试',
+  'error.back': '返回目录',
+  'player.fullscreen': '全屏',
+  'player.exitFullscreen': '退出全屏',
+  'player.fps': 'FPS',
+  'player.fpsOn': '显示 FPS',
+  'player.fpsOff': '隐藏 FPS',
+} as const
+
+export type MessageKey = keyof typeof zh
