@@ -105,8 +105,8 @@ footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
   <h1>DrawPhysicsHub — <em>开发计划</em></h1>
   <div class="meta">
     <span>关联评估：<b>vue-threejs-物理可视化可行性评估.md</b></span>
-    <span>计划版本：<b>v1.3</b></span>
-    <span>日期：<b>2026-11-15</b></span>
+    <span>计划版本：<b>v1.5</b></span>
+    <span>日期：<b>2026-11-16</b></span>
     <span>分期：一期约 10 周 + 二期约 8 周+</span>
   </div>
   <div class="overall">
@@ -262,12 +262,12 @@ footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
 <h3 class="grp" id="grp-M2-A">M2-A 应用壳与目录</h3>
 <ul class="tasks">
 <li class="task done"><input type="checkbox" class="ck-task" data-id="M2-01" id="t-M2-01" checked><label for="t-M2-01"><span class="tid">M2-01</span><span class="tt">应用壳：顶栏 + 演示三栏（控制台 / 解析 / 视口）</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-02" id="t-M2-02"><label for="t-M2-02"><span class="tid">M2-02</span><span class="tt">学科→分类→演示树（静态 JSON 清单）</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-03" id="t-M2-03"><label for="t-M2-03"><span class="tid">M2-03</span><span class="tt">搜索与标签过滤</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-02" id="t-M2-02" checked><label for="t-M2-02"><span class="tid">M2-02</span><span class="tt">学科→分类→演示树（listDemos 现算）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-03" id="t-M2-03" checked><label for="t-M2-03"><span class="tid">M2-03</span><span class="tt">搜索与标签过滤</span></label></li>
 <li class="task done"><input type="checkbox" class="ck-task" data-id="M2-04" id="t-M2-04" checked><label for="t-M2-04"><span class="tid">M2-04</span><span class="tt">演示路由深链 /s/:subject/:demoId</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-08" id="t-M2-08"><label for="t-M2-08"><span class="tid">M2-08</span><span class="tt">缩略图与卡片列表</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-13" id="t-M2-13"><label for="t-M2-13"><span class="tid">M2-13</span><span class="tt">主题：浅色教学默认</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-14" id="t-M2-14"><label for="t-M2-14"><span class="tid">M2-14</span><span class="tt">i18n 预留（中文优先）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-08" id="t-M2-08" checked><label for="t-M2-08"><span class="tid">M2-08</span><span class="tt">缩略图与卡片列表（真实封面 PNG + placeholder.svg）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-13" id="t-M2-13" checked><label for="t-M2-13"><span class="tid">M2-13</span><span class="tt">主题：浅色教学默认（目录/顶栏；演示深色视口）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-14" id="t-M2-14" checked><label for="t-M2-14"><span class="tid">M2-14</span><span class="tt">i18n 预留（中文优先）</span></label></li>
 </ul>
 <h3 class="grp" id="grp-M2-B">M2-B 播放与说明</h3>
 <ul class="tasks">
@@ -275,9 +275,9 @@ footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
 <li class="task done"><input type="checkbox" class="ck-task" data-id="M2-06" id="t-M2-06" checked><label for="t-M2-06"><span class="tid">M2-06</span><span class="tt">参数面板：滑块实时驱动模型</span></label></li>
 <li class="task done"><input type="checkbox" class="ck-task" data-id="M2-07" id="t-M2-07" checked><label for="t-M2-07"><span class="tid">M2-07</span><span class="tt">说明区：概念解释、教学目标、分步公式代入、挑战卡</span></label></li>
 <li class="task done"><input type="checkbox" class="ck-task" data-id="M2-09" id="t-M2-09" checked><label for="t-M2-09"><span class="tid">M2-09</span><span class="tt">2D / 3D / 图表 Tab 切换（含坐标系）</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-10" id="t-M2-10"><label for="t-M2-10"><span class="tid">M2-10</span><span class="tt">全屏演示模式</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-11" id="t-M2-11"><label for="t-M2-11"><span class="tid">M2-11</span><span class="tt">错误边界：模型异常降级提示</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M2-12" id="t-M2-12"><label for="t-M2-12"><span class="tid">M2-12</span><span class="tt">性能 HUD（可选 FPS / 粒子数）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-10" id="t-M2-10" checked><label for="t-M2-10"><span class="tid">M2-10</span><span class="tt">全屏演示模式</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-11" id="t-M2-11" checked><label for="t-M2-11"><span class="tid">M2-11</span><span class="tt">错误边界：模型异常降级提示</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-12" id="t-M2-12" checked><label for="t-M2-12"><span class="tid">M2-12</span><span class="tt">性能 HUD（可选 FPS）</span></label></li>
 </ul>
 <h3 class="grp acc" id="accept-M2">M2 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
 <ul class="tasks">
@@ -326,7 +326,7 @@ footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
 <section class="ms" data-ms="M4" id="M4">
 <div class="ms-head">
 <div class="ms-title"><h2><em>M4</em> — 力学样板包</h2><span class="chip">2 周</span></div>
-<p class="ms-goal">目标：<b>≥12 个力学演示达标，建立内容规范</b> · 进度：<b>9 / 12</b>（含圆周、斜面增补）</p>
+<p class="ms-goal">目标：<b>≥12 个力学演示达标，建立内容规范</b> · 进度：<b>9 / 12</b>（含圆周、斜面；目录封面 / 多学科预告已落地）</p>
 <div class="ms-stats"><div class="bar"><i id="bar-M4"></i></div><span class="count" id="cnt-M4">0 / 0</span></div>
 </div>
 <h3 class="grp" id="grp-M4-A">M4-A 规范与运动学/动力学</h3>
@@ -348,7 +348,7 @@ footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
 <li class="task done"><input type="checkbox" class="ck-task" data-id="M4-10" id="t-M4-10" checked><label for="t-M4-10"><span class="tid">M4-10</span><span class="tt">单摆 / 复摆（选一深化）— 单摆已完成</span></label></li>
 <li class="task"><input type="checkbox" class="ck-task" data-id="M4-11" id="t-M4-11"><label for="t-M4-11"><span class="tid">M4-11</span><span class="tt">横波形成与传播</span></label></li>
 <li class="task"><input type="checkbox" class="ck-task" data-id="M4-12" id="t-M4-12"><label for="t-M4-12"><span class="tid">M4-12</span><span class="tt">驻波</span></label></li>
-<li class="task"><input type="checkbox" class="ck-task" data-id="M4-15" id="t-M4-15"><label for="t-M4-15"><span class="tid">M4-15</span><span class="tt">力学包目录 JSON 与封面</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M4-15" id="t-M4-15" checked><label for="t-M4-15"><span class="tid">M4-15</span><span class="tt">目录规划与封面（catalogPlan + public/covers；敬请期待占位）</span></label></li>
 <li class="task"><input type="checkbox" class="ck-task" data-id="M4-16" id="t-M4-16"><label for="t-M4-16"><span class="tid">M4-16</span><span class="tt">力学包抽检报告（数值极限）</span></label></li>
 </ul>
 <h3 class="grp acc" id="accept-M4">M4 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
@@ -580,7 +580,7 @@ footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
   </ul>
 </div>
 
-<footer class="foot">DrawPhysicsHub 开发计划 v1.3 · 2026-11-15 · M1 完成 · M2 部分完成 · M4 力学包进行中（9 演示）</footer>
+<footer class="foot">DrawPhysicsHub 开发计划 v1.5 · 2026-11-16 · M1/M2 完成 · M4 力学包进行中（9 可玩 + 封面/多学科预告）</footer>
 
 <script>
 (function(){

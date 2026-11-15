@@ -47,6 +47,8 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 
 `DemoPlayer` 只负责组装壳 + 通过 **Adapter**（`meta.adapter` → `registerAdapter`）挂接 paint / setup3d / buildCompare；不 import 具体 demo。`features.compare|scrub|charts` 控制能力；对比图例用 `legend.id` / `features.compareLegendId`。
 
+目录页：`app/catalog/demoCatalog.ts` 由 `listDemos()` + `catalogPlan.PLANNED_SOON` 现算学科→分类树，支持搜索/标签与「敬请期待」卡片；封面走 `LIVE_COVERS`（`public/covers/*.png`）或通用 `PLACEHOLDER_COVER`，URL 经 `publicAsset` 拼 Vite `base`；壳文案走 `app/i18n`。
+
 ## 新增一个演示
 
 1. 在 `demos/<subject>/` 实现 `createXxxModel()` + `DemoMeta`（填齐 `concept` / `steps` / `challenges` / `readouts`；输出 `tMax` 与所需衍生量）
@@ -54,7 +56,8 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 3. 专用画面放同目录 `render*.ts`
 4. 用 `registerDemoBundle({ model, adapter, meta })`（或分别 `registerModel` / `registerAdapter` / `registerDemo`），并在 `demos/index.ts` 调用
 5. （可选）极限行为与挑战 `*.spec.ts`
-6. **勿改** `DemoPlayer.vue`；复用壳与 `components/demo/*`
+6. （可选）在 `LIVE_COVERS` 登记封面，并把截图放到 `public/covers/<id>.png`（可用 `scripts/capture-covers.mjs`）
+7. **勿改** `DemoPlayer.vue`；复用壳与 `components/demo/*`
 
 ## 已注册力学演示（`demos/index.ts`）
 
