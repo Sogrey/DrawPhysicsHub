@@ -1,0 +1,78 @@
+# DrawPhysicsHub 架构说明
+
+## 分层
+
+```
+app/          Vue 壳：路由、DemoPlayer（三栏教学 UI）、参数 / 挑战 / 解析
+demos/        具体演示：DemoMeta + PhysicsModel + Adapter（如 mechanics/projectile）
+core/physics  模型层：协议、ODE、表达式、场采样、pedagogy、注册表、adapter（可单测）
+core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、矢量、辅助线）
+```
+
+## 边界
+
+- **物理对错**只由 `core/physics` 与各 demo 的 model 负责；渲染层不得改写物理状态。
+- **渲染**只消费 `ObserveSnapshot`（及模板约定字段），可随时替换实现。
+- **Demo 协议**见 `core/physics/types.ts`：`DemoMeta` / `ParamDef` / `PhysicsModel` / `DemoDocs` / `DemoAdapter`。
+
+## 时间轴约定
+
+- scrub / 曲线全长读取 `observe.values[meta.time.maxKey]`。
+- `maxKey` 缺省为 `tMax`；未设置时兼容旧键 `flightTime`。
+- 模型在 `done === 1` 时表示当前过程结束（再点播放会先复位）。
+
+## DemoDocs 教学字段
+
+| 字段 | 用途 |
+|------|------|
+| `concept` | 概念解释（**仅说明页**；中栏不重复） |
+| `steps` + `bindings` | 分步解析 + 公式旁实时代入 |
+| `challenges` | 引导挑战（声明式 `check`，播放器判定） |
+| `legend` / `insight` | 图例（可用 `id`）、提示条 |
+| `objectives` / `formulas` | 教学目标、公式列表 |
+
+辅助：`core/physics/pedagogy.ts`（`buildPedagogyContext` **只 merge** params + live，不写死 demo 公式；衍生量由 model.observe 输出）。  
+模型可选实现 `seek(t)`，供时间轴 scrub。
+
+## 可复用拆分（对照抛体样板）
+
+详见 [组件复用拆分.md](./组件复用拆分.md)。
+
+| 层 | 复用 |
+|----|------|
+| Vue | `app/components/demo/*`：参数台 / 播放条 / 读数 / 解析 / 挑战 / 图例 / Tabs / Three HUD |
+| Composable | `useDemoModel` · `useSimPlayback` · `usePedagogy` · `useCanvas2DView` · `useThreeView` · `useCompareTrail` · `useDemoCharts` |
+| 渲染原语 | `primitives2d` / `primitives3d` / `particle3d` / `chart2d` |
+| Demo 专用 | `demos/<subject>/`：model + adapter + render* + meta |
+
+`DemoPlayer` 只负责组装壳 + 通过 **Adapter**（`meta.adapter` → `registerAdapter`）挂接 paint / setup3d / buildCompare；不 import 具体 demo。`features.compare|scrub|charts` 控制能力；对比图例用 `legend.id` / `features.compareLegendId`。
+
+## 新增一个演示
+
+1. 在 `demos/<subject>/` 实现 `createXxxModel()` + `DemoMeta`（填齐 `concept` / `steps` / `challenges` / `readouts`；输出 `tMax` 与所需衍生量）
+2. 实现 `createXxxAdapter()`（`paint2d` / `setup3d` / `buildCompare` 等）
+3. 专用画面放同目录 `render*.ts`
+4. 用 `registerDemoBundle({ model, adapter, meta })`（或分别 `registerModel` / `registerAdapter` / `registerDemo`），并在 `demos/index.ts` 调用
+5. （可选）极限行为与挑战 `*.spec.ts`
+6. **勿改** `DemoPlayer.vue`；复用壳与 `components/demo/*`
+
+## 已注册力学演示（`demos/index.ts`）
+
+| id | 目录入口 | 要点 |
+|----|----------|------|
+| `mech-projectile` | `projectile.ts` | 教学样板：分解 / 对比 / scrub |
+| `mech-circular` | `circular.ts` | 匀速圆周、向心加速度 |
+| `mech-incline` | `incline.ts` | 斜面滑块、摩擦、能量 |
+| `mech-harmonic` | `harmonic.ts` | 简谐；Adapter 验收样板 |
+| `mech-damped` | `damped.ts` | 欠阻尼包络 |
+| `mech-forced` | `forced.ts` | 受迫稳态 / 共振 |
+| `mech-pendulum` | `pendulum.ts` | 单摆小角 / 大摆角 |
+| `mech-collision-1d` | `collision.ts` | 一维碰撞 |
+| `mech-rolling` | `rolling.ts` | 无滑滚动、\(v=\omega R\)、动能分配 |
+
+2D 图注约定：优先用 `primitives2d` 的 `drawAngleMark` / `drawDimLine` / `drawDiagramLabel`，避免与轴线/轨迹压线。
+
+## 禁止事项
+
+- 不做通用动态几何 / CAS 白板
+- 不在浏览器执行任意用户脚本表达式（仅受限算术求值器）
