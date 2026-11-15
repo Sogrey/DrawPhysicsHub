@@ -17,7 +17,6 @@
     "test:watch": "vitest",
     "typecheck": "vue-tsc -b --pretty false"
   },
-
   "dependencies": {
     "katex": "^0.16.21",
     "pinia": "^3.0.1",
@@ -30,6 +29,7 @@
     "@types/node": "^26.6.6",
     "@types/three": "^0.174.0",
     "@vitejs/plugin-vue": "^5.2.1",
+    "playwright": "^1.65.1",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vitest": "^3.0.8",
