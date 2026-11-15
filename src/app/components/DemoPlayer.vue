@@ -10,6 +10,8 @@ import { useCanvas2DView } from '@/app/composables/useCanvas2DView'
 import { useThreeView } from '@/app/composables/useThreeView'
 import { useCompareTrail } from '@/app/composables/useCompareTrail'
 import { useDemoCharts } from '@/app/composables/useDemoCharts'
+import { useFpsHud } from '@/app/composables/useFpsHud'
+import { t } from '@/app/i18n'
 import ParamConsole from './demo/ParamConsole.vue'
 import PlaybackBar from './demo/PlaybackBar.vue'
 import ReadoutGrid from './demo/ReadoutGrid.vue'
@@ -23,9 +25,12 @@ import ThreeViewHud from './demo/ThreeViewHud.vue'
 
 const props = defineProps<{ meta: DemoMeta }>()
 
+const playerEl = ref<HTMLElement | null>(null)
+const isFullscreen = ref(false)
 const activeView = ref(props.meta.views[0]?.id ?? 'main2d')
 const showAnalysis = ref(true)
 const live = reactive<Record<string, number>>({})
+const { showFps, fps, tick: tickFps, toggle: toggleFps } = useFpsHud()
 
 const modelApi = useDemoModel(props.meta)
 const { params } = modelApi
@@ -93,7 +98,10 @@ const viewDocsId = computed(() => props.meta.views.find((v) => v.kind === 'docs'
 
 const playback = useSimPlayback({
   step: (dt) => modelApi.step(dt),
-  paint: () => paint(),
+  paint: () => {
+    tickFps()
+    paint()
+  },
   isDone: () => Number(modelApi.observe()?.values.done ?? 0) === 1,
   reset: () => {
     modelApi.reset()
@@ -101,6 +109,20 @@ const playback = useSimPlayback({
   },
 })
 const { playing, speed, scrubbing, play, pause, stopLoop } = playback
+
+let fpsRaf = 0
+function fpsIdleLoop() {
+  tickFps()
+  if (showFps.value && !playing.value) fpsRaf = requestAnimationFrame(fpsIdleLoop)
+  else fpsRaf = 0
+}
+watch(showFps, (on) => {
+  if (on && !playing.value && !fpsRaf) fpsRaf = requestAnimationFrame(fpsIdleLoop)
+  if (!on && fpsRaf) {
+    cancelAnimationFrame(fpsRaf)
+    fpsRaf = 0
+  }
+})
 
 const readouts = computed(() =>
   (props.meta.readouts ?? []).map((d) => {
@@ -208,6 +230,24 @@ function onResize() {
   paint()
 }
 
+function onFullscreenChange() {
+  const el = playerEl.value
+  isFullscreen.value = !!el && document.fullscreenElement === el
+  // 全屏切换后布局变化，补一次 resize
+  requestAnimationFrame(() => onResize())
+}
+
+async function toggleFullscreen() {
+  const el = playerEl.value
+  if (!el) return
+  try {
+    if (document.fullscreenElement === el) await document.exitFullscreen()
+    else await el.requestFullscreen()
+  } catch (e) {
+    console.warn('fullscreen failed', e)
+  }
+}
+
 watch(activeView, async (id) => {
   await Promise.resolve()
   setupActiveView(id)
@@ -215,16 +255,31 @@ watch(activeView, async (id) => {
 })
 
 onMounted(() => {
-  adapter = createAdapter(props.meta.adapter ?? props.meta.model)
-  modelApi.defaultsFromMeta()
-  modelApi.ensureModel()
-  setupActiveView(activeView.value)
-  paint()
+  try {
+    const adapterId = props.meta.adapter ?? props.meta.model
+    adapter = createAdapter(adapterId)
+    if (!adapter) throw new Error(`未注册适配器: ${adapterId}`)
+    modelApi.defaultsFromMeta()
+    modelApi.ensureModel()
+    setupActiveView(activeView.value)
+    paint()
+  } catch (e) {
+    disposeCanvas2d()
+    disposeThree()
+    modelApi.dispose()
+    adapter = null
+    throw e instanceof Error ? e : new Error(String(e))
+  }
   window.addEventListener('resize', onResize)
+  document.addEventListener('fullscreenchange', onFullscreenChange)
 })
 
 onUnmounted(() => {
   stopLoop()
+  if (fpsRaf) cancelAnimationFrame(fpsRaf)
+  if (document.fullscreenElement && playerEl.value && document.fullscreenElement === playerEl.value) {
+    void document.exitFullscreen()
+  }
   adapter?.dispose3d?.()
   adapter?.dispose?.()
   adapter = null
@@ -232,11 +287,19 @@ onUnmounted(() => {
   disposeThree()
   modelApi.dispose()
   window.removeEventListener('resize', onResize)
+  document.removeEventListener('fullscreenchange', onFullscreenChange)
 })
 </script>
 
 <template>
-  <div class="player" :class="{ 'with-analysis': showAnalysis && hasAnalysis }">
+  <div
+    ref="playerEl"
+    class="player"
+    :class="{
+      'with-analysis': showAnalysis && hasAnalysis,
+      'is-fullscreen': isFullscreen,
+    }"
+  >
     <aside class="side console">
       <DemoConsoleHeader
         :subject="meta.subject"
@@ -288,7 +351,27 @@ onUnmounted(() => {
     />
 
     <section class="stage">
-      <ViewTabs v-model="activeView" :views="meta.views" />
+      <ViewTabs v-model="activeView" :views="meta.views">
+        <template #actions>
+          <button
+            type="button"
+            class="stage-btn"
+            :title="showFps ? t('player.fpsOff') : t('player.fpsOn')"
+            :class="{ active: showFps }"
+            @click="toggleFps"
+          >
+            {{ t('player.fps') }}
+          </button>
+          <button
+            type="button"
+            class="stage-btn"
+            :title="isFullscreen ? t('player.exitFullscreen') : t('player.fullscreen')"
+            @click="toggleFullscreen"
+          >
+            {{ isFullscreen ? t('player.exitFullscreen') : t('player.fullscreen') }}
+          </button>
+        </template>
+      </ViewTabs>
 
       <div v-if="view2dId" class="viewport dark" v-show="activeView === view2dId">
         <canvas ref="canvas2dEl"></canvas>
@@ -315,6 +398,8 @@ onUnmounted(() => {
         :objectives="meta.docs.objectives"
         :formulas="meta.docs.formulas"
       />
+
+      <div v-if="showFps" class="fps-hud">{{ t('player.fps') }} {{ fps }}</div>
     </section>
   </div>
 </template>
