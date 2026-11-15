@@ -2,10 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { buildPedagogyContext, evalChallengeCheck, formatBinding } from './pedagogy'
 
 describe('pedagogy helpers', () => {
-  it('builds v0x/v0y from params', () => {
-    const ctx = buildPedagogyContext({ v0: 10, angle: 30 }, {})
-    expect(ctx.v0x).toBeCloseTo(10 * Math.cos(Math.PI / 6), 5)
-    expect(ctx.v0y).toBeCloseTo(10 * Math.sin(Math.PI / 6), 5)
+  it('merges params and live without demo-specific formulas', () => {
+    const ctx = buildPedagogyContext({ A: 2, omega: 3 }, { x: 1.5, v0x: 9 })
+    expect(ctx.A).toBe(2)
+    expect(ctx.omega).toBe(3)
+    expect(ctx.x).toBe(1.5)
+    expect(ctx.v0x).toBe(9)
+    expect(ctx.v0y).toBeUndefined()
   })
 
   it('evaluates nested all checks', () => {

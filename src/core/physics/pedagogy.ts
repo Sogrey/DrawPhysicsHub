@@ -2,7 +2,10 @@ import type { ChallengeCheck, DemoChallenge, DemoStepBinding, ParamValues } from
 
 export type PedagogyContext = Record<string, number>
 
-/** Merge params + live observables into a flat numeric context for bindings / challenges. */
+/**
+ * Merge params + live observables into a flat numeric context for bindings / challenges.
+ * 不写死任何 demo 公式；衍生量（如 v0x）须由 model.observe 写入 live。
+ */
 export function buildPedagogyContext(
   params: ParamValues,
   live: Record<string, number>,
@@ -11,12 +14,6 @@ export function buildPedagogyContext(
   for (const [k, v] of Object.entries(params)) {
     if (typeof v === 'number') ctx[k] = v
   }
-  const v0 = ctx.v0 ?? 20
-  const angle = ctx.angle ?? 45
-  const th = (angle * Math.PI) / 180
-  ctx.v0x = v0 * Math.cos(th)
-  ctx.v0y = v0 * Math.sin(th)
-  ctx.theta = angle
   return ctx
 }
 

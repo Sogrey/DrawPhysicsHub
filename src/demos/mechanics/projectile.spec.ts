@@ -30,8 +30,15 @@ describe('projectile model', () => {
 })
 
 describe('projectile pedagogy', () => {
-  it('formats live bindings from context', () => {
-    const ctx = buildPedagogyContext({ v0: 20, angle: 45 }, { t: 0, x: 0, y: 0, range: 0, hmax: 10.2 })
+  it('formats live bindings from observe-derived context', () => {
+    const m = createProjectileModel()
+    m.init({ v0: 20, angle: 45 })
+    const snap = m.observe()
+    const live: Record<string, number> = { t: snap.time }
+    for (const [k, v] of Object.entries(snap.values)) {
+      if (typeof v === 'number') live[k] = v
+    }
+    const ctx = buildPedagogyContext({ v0: 20, angle: 45 }, live)
     const tex = formatBinding({ labelTex: 'v_{0x}', valueKey: 'v0x', unit: 'm/s' }, ctx)
     expect(tex).toContain('14.14')
   })

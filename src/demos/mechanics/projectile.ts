@@ -1,5 +1,6 @@
 import type { DemoMeta, ObserveSnapshot, ParamValues, PhysicsModel } from '@/core/physics/types'
-import { registerDemo, registerModel } from '@/core/physics/registry'
+import { registerDemoBundle } from '@/core/physics/registry'
+import { createProjectileAdapter } from './projectileAdapter'
 
 const G = 9.8
 
@@ -61,6 +62,8 @@ export function createProjectileModel(): PhysicsModel {
       const hmax = (v0 * v0 * Math.sin(th) ** 2) / (2 * G)
       const tmax = (v0 * Math.sin(th)) / G
       const T = flightTime()
+      const v0x = v0 * Math.cos(th)
+      const v0y = v0 * Math.sin(th)
       return {
         time: t,
         values: {
@@ -72,9 +75,13 @@ export function createProjectileModel(): PhysicsModel {
           range,
           hmax,
           tmax,
+          tMax: T,
           flightTime: T,
           angle: angleDeg,
+          theta: angleDeg,
           v0,
+          v0x,
+          v0y,
           done: t >= T - 1e-9 ? 1 : 0,
         },
         trails: { path: trail.map((p) => [...p]) },
@@ -100,6 +107,14 @@ export const projectileMeta: DemoMeta = {
   category: '质点运动学',
   tags: ['抛体', '运动学', 'hello'],
   model: 'projectile',
+  adapter: 'projectile',
+  time: { maxKey: 'tMax' },
+  features: {
+    compare: true,
+    scrub: true,
+    charts: true,
+    compareLegendId: 'compare',
+  },
   params: [
     {
       key: 'v0',
@@ -125,8 +140,47 @@ export const projectileMeta: DemoMeta = {
   views: [
     { id: 'main2d', kind: 'canvas2d', title: '轨迹' },
     { id: 'scene3d', kind: 'three', title: '3D 示意' },
-    { id: 'chart', kind: 'chart', title: 'y(t)' },
+    {
+      id: 'chart',
+      kind: 'chart',
+      title: '曲线',
+      chartKey: 'y',
+      charts: [
+        {
+          id: 'pos',
+          title: '位置 · x(t) / y(t)',
+          xLabel: 't (s)',
+          leftLabel: 'x, y (m)',
+          series: [
+            { key: 'x', label: 'x', color: '#94a3b8', unit: 'm' },
+            { key: 'y', label: 'y', color: '#38bdf8', unit: 'm' },
+          ],
+        },
+        {
+          id: 'vel',
+          title: '速度 · |v| 与分量',
+          xLabel: 't (s)',
+          leftLabel: '|v| (m/s)',
+          rightLabel: 'vₓ, vᵧ (m/s)',
+          series: [
+            { key: 'speed', label: '|v|', color: '#4ade80', unit: 'm/s', axis: 'left' },
+            { key: 'vx', label: 'vₓ', color: '#60a5fa', unit: 'm/s', axis: 'right' },
+            { key: 'vy', label: 'vᵧ', color: '#fbbf24', unit: 'm/s', axis: 'right' },
+          ],
+        },
+      ],
+    },
     { id: 'docs', kind: 'docs', title: '说明' },
+  ],
+  readouts: [
+    { key: 't', label: 't', unit: 's', tone: 'cyan' },
+    { key: 'x', label: 'x', unit: 'm', tone: 'slate' },
+    { key: 'y', label: 'y', unit: 'm', tone: 'slate' },
+    { key: 'speed', label: '|v|', unit: 'm/s', tone: 'green' },
+    { key: 'vx', label: 'vₓ', unit: 'm/s', tone: 'blue' },
+    { key: 'vy', label: 'vᵧ', unit: 'm/s', tone: 'blue' },
+    { key: 'range', label: 'R', unit: 'm', tone: 'purple' },
+    { key: 'hmax', label: 'Hₘₐₓ', unit: 'm', tone: 'amber' },
   ],
   docs: {
     title: '抛体运动',
@@ -150,7 +204,7 @@ export const projectileMeta: DemoMeta = {
     legend: [
       { color: '#f97316', label: '理论抛物线' },
       { color: '#38bdf8', label: '已飞行轨迹' },
-      { color: '#f472b6', label: '对比轨迹' },
+      { id: 'compare', color: '#f472b6', label: '对比轨迹' },
       { color: '#ef4444', label: '质点' },
       { color: '#4ade80', label: '速度矢量 v' },
       { color: '#60a5fa', label: 'vₓ 分量' },
@@ -232,6 +286,9 @@ export const projectileMeta: DemoMeta = {
 }
 
 export function registerProjectileDemo(): void {
-  registerModel('projectile', createProjectileModel)
-  registerDemo(projectileMeta)
+  registerDemoBundle({
+    meta: projectileMeta,
+    model: createProjectileModel,
+    adapter: createProjectileAdapter,
+  })
 }

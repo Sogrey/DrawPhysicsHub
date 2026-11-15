@@ -1,4 +1,14 @@
 import * as THREE from 'three'
+import { createLabeledAxes } from '@/core/render/primitives3d'
+
+export interface ThreeViewDefaults {
+  lookAt?: [number, number, number]
+  yaw?: number
+  pitch?: number
+  distance?: number
+  distanceMin?: number
+  distanceMax?: number
+}
 
 export interface ThreeHost {
   renderer: THREE.WebGLRenderer
@@ -9,6 +19,8 @@ export interface ThreeHost {
   dispose(): void
   setAutoRotate(on: boolean): void
   resetView(): void
+  /** demo adapter 按场景尺度取景（简谐近景 / 抛体远景） */
+  setViewDefaults(opts: ThreeViewDefaults): void
 }
 
 export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
@@ -19,15 +31,23 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
   scene.fog = new THREE.Fog(0x0b1220, 80, 180)
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000)
-  const lookAt = new THREE.Vector3(18, 4, 0)
-  let yaw = 0.55
-  let pitch = 0.42
-  let distance = 70
+  const defaultLookAt = new THREE.Vector3(18, 4, 0)
+  const lookAt = defaultLookAt.clone()
+  let defaultYaw = 0.55
+  let defaultPitch = 0.42
+  let defaultDistance = 70
+  let yaw = defaultYaw
+  let pitch = defaultPitch
+  let distance = defaultDistance
+  let distanceMin = 4
+  let distanceMax = 140
   let autoRotate = false
-  let dragging = false
+  let dragMode: 'orbit' | 'pan' | null = null
   let lastX = 0
   let lastY = 0
   let rafOrbit = 0
+  const panRight = new THREE.Vector3()
+  const panUp = new THREE.Vector3()
 
   function applyCamera() {
     camera.position.set(
@@ -50,34 +70,52 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
 
   scene.add(createLabeledAxes(28))
 
+  function isPanGesture(e: PointerEvent) {
+    // 右键 / 中键 / Shift+左键 → 平移
+    return e.button === 2 || e.button === 1 || (e.button === 0 && e.shiftKey)
+  }
+
   const onPointerDown = (e: PointerEvent) => {
-    dragging = true
+    dragMode = isPanGesture(e) ? 'pan' : e.button === 0 ? 'orbit' : null
+    if (!dragMode) return
     lastX = e.clientX
     lastY = e.clientY
     canvas.setPointerCapture(e.pointerId)
   }
   const onPointerMove = (e: PointerEvent) => {
-    if (!dragging) return
+    if (!dragMode) return
     const dx = e.clientX - lastX
     const dy = e.clientY - lastY
     lastX = e.clientX
     lastY = e.clientY
-    yaw -= dx * 0.008
-    pitch = Math.max(-0.2, Math.min(1.2, pitch + dy * 0.008))
+    if (dragMode === 'orbit') {
+      yaw -= dx * 0.008
+      pitch = Math.max(-0.2, Math.min(1.2, pitch + dy * 0.008))
+    } else {
+      // 沿相机右/上方向平移注视点
+      panRight.setFromMatrixColumn(camera.matrixWorld, 0).normalize()
+      panUp.setFromMatrixColumn(camera.matrixWorld, 1).normalize()
+      const scale = distance * 0.0018
+      lookAt.addScaledVector(panRight, -dx * scale)
+      lookAt.addScaledVector(panUp, dy * scale)
+    }
     applyCamera()
     renderer.render(scene, camera)
   }
   const onPointerUp = (e: PointerEvent) => {
-    dragging = false
+    dragMode = null
     try {
       canvas.releasePointerCapture(e.pointerId)
     } catch {
       /* ignore */
     }
   }
+  const onContextMenu = (e: Event) => {
+    e.preventDefault()
+  }
   const onWheel = (e: WheelEvent) => {
     e.preventDefault()
-    distance = Math.max(20, Math.min(140, distance + e.deltaY * 0.04))
+    distance = Math.max(distanceMin, Math.min(distanceMax, distance + e.deltaY * 0.04))
     applyCamera()
     renderer.render(scene, camera)
   }
@@ -85,6 +123,7 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
   canvas.addEventListener('pointerdown', onPointerDown)
   canvas.addEventListener('pointermove', onPointerMove)
   canvas.addEventListener('pointerup', onPointerUp)
+  canvas.addEventListener('contextmenu', onContextMenu)
   canvas.addEventListener('wheel', onWheel, { passive: false })
 
   const tickOrbit = () => {
@@ -117,10 +156,25 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
     setAutoRotate(on: boolean) {
       autoRotate = on
     },
+    setViewDefaults(opts: ThreeViewDefaults) {
+      if (opts.lookAt) defaultLookAt.set(...opts.lookAt)
+      if (opts.yaw != null) defaultYaw = opts.yaw
+      if (opts.pitch != null) defaultPitch = opts.pitch
+      if (opts.distance != null) defaultDistance = opts.distance
+      if (opts.distanceMin != null) distanceMin = opts.distanceMin
+      if (opts.distanceMax != null) distanceMax = opts.distanceMax
+      yaw = defaultYaw
+      pitch = defaultPitch
+      distance = defaultDistance
+      lookAt.copy(defaultLookAt)
+      applyCamera()
+      renderer.render(scene, camera)
+    },
     resetView() {
-      yaw = 0.55
-      pitch = 0.42
-      distance = 70
+      yaw = defaultYaw
+      pitch = defaultPitch
+      distance = defaultDistance
+      lookAt.copy(defaultLookAt)
       applyCamera()
       renderer.render(scene, camera)
     },
@@ -129,6 +183,7 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
       canvas.removeEventListener('pointerdown', onPointerDown)
       canvas.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerup', onPointerUp)
+      canvas.removeEventListener('contextmenu', onContextMenu)
       canvas.removeEventListener('wheel', onWheel)
       scene.traverse((obj) => {
         const mesh = obj as THREE.Mesh
@@ -144,57 +199,4 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
   }
 }
 
-/** 带 x/y/z 轴标的三维坐标系 */
-function createLabeledAxes(size = 24): THREE.Group {
-  const group = new THREE.Group()
-  const axes: Array<{ dir: THREE.Vector3; color: number; label: string }> = [
-    { dir: new THREE.Vector3(1, 0, 0), color: 0xef4444, label: 'x' },
-    { dir: new THREE.Vector3(0, 1, 0), color: 0x22c55e, label: 'y' },
-    { dir: new THREE.Vector3(0, 0, 1), color: 0x3b82f6, label: 'z' },
-  ]
-
-  for (const a of axes) {
-    const origin = new THREE.Vector3(0, 0, 0)
-    const arrow = new THREE.ArrowHelper(a.dir, origin, size, a.color, size * 0.08, size * 0.05)
-    group.add(arrow)
-
-    const canvas = document.createElement('canvas')
-    canvas.width = 64
-    canvas.height = 64
-    const ctx = canvas.getContext('2d')!
-    ctx.clearRect(0, 0, 64, 64)
-    ctx.fillStyle = `#${a.color.toString(16).padStart(6, '0')}`
-    ctx.font = 'bold 42px Segoe UI, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(a.label, 32, 34)
-    const tex = new THREE.CanvasTexture(canvas)
-    const sprite = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }),
-    )
-    sprite.scale.set(2.4, 2.4, 1)
-    sprite.position.copy(a.dir.clone().multiplyScalar(size + 1.8))
-    group.add(sprite)
-  }
-
-  return group
-}
-
-export function syncProjectileThree(
-  host: ThreeHost,
-  ball: THREE.Mesh,
-  line: THREE.Line,
-  snap: { x: number; y: number; path: number[][] },
-): void {
-  ball.position.set(snap.x, Math.max(0, snap.y), 0)
-  const positions = new Float32Array(Math.max(snap.path.length, 1) * 3)
-  for (let i = 0; i < snap.path.length; i++) {
-    positions[i * 3] = snap.path[i]![0]!
-    positions[i * 3 + 1] = snap.path[i]![1]!
-    positions[i * 3 + 2] = 0
-  }
-  line.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  line.geometry.setDrawRange(0, snap.path.length)
-  line.geometry.attributes.position!.needsUpdate = true
-  host.render()
-}
+export { createLabeledAxes } from '@/core/render/primitives3d'
