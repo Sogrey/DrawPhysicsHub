@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DrawPhysicsHub — 开发计划</title>
+<style>
+:root{--bg:#0b1020;--card:rgba(255,255,255,.045);--border:rgba(255,255,255,.1);--cyan:#00d4ff;--purple:#7c5cff;--text:#e6edf7;--sub:#8b9bb4;--ok:#34d399;--gold:#fbbf24}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{min-height:100%}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;color:var(--text);line-height:1.7;max-width:960px;margin:0 auto;padding:40px 24px 60px 200px;min-height:100vh;background:radial-gradient(ellipse 50% 35% at 15% 0%,rgba(0,212,255,.09),transparent 60%),radial-gradient(ellipse 45% 30% at 85% 10%,rgba(124,92,255,.1),transparent 55%),var(--bg)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:28px 28px}
+body>*{position:relative;z-index:1}
+.hero{padding:44px 36px 32px;border-radius:18px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(124,92,255,.1)),var(--card);margin-bottom:20px}
+.hero h1{font-size:26px;font-weight:800}.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .meta{font-size:13px;color:var(--sub);margin-top:8px;display:flex;flex-wrap:wrap;gap:6px 18px}.hero .meta b{color:var(--text)}
+.overall{margin-top:22px}.overall .row{display:flex;justify-content:space-between;margin-bottom:8px}.overall .label{font-size:13px;color:var(--sub)}.overall .pct{font-size:18px;font-weight:800;color:var(--cyan)}
+.bar{height:10px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden}.bar>i{display:block;height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .45s}
+.overall .substat{font-size:12px;color:var(--sub);margin-top:8px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 24px}
+.toolbar button,.toolbar label.btn{border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:13px;padding:8px 16px;cursor:pointer}
+.toolbar button:hover,.toolbar label.btn:hover{border-color:var(--cyan);color:var(--cyan)}.toolbar button.danger:hover{border-color:#ff5b6e;color:#ff5b6e}.toolbar input[type=file]{display:none}
+.note{border:1px solid var(--border);border-left:3px solid var(--cyan);background:var(--card);border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:14px;color:var(--sub)}
+.note b{color:var(--text)}.note ul{padding-left:18px;margin-top:6px}.note li{margin-bottom:4px}
+.phase-tag{display:inline-block;font-size:13px;font-weight:700;padding:3px 14px;border-radius:20px;margin:0 0 16px}
+.phase-tag.p1{color:var(--cyan);border:1px solid rgba(0,212,255,.35);background:rgba(0,212,255,.08)}
+.phase-tag.p2{color:var(--gold);border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
+.ov-table-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card);margin-bottom:12px}
+.ov-table-wrap h4{padding:10px 16px;font-size:14px;border-bottom:1px solid var(--border)}.ov-table-wrap h4.gold{color:var(--gold)}
+.ov-table{width:100%;border-collapse:collapse;font-size:14px}
+.ov-table th{text-align:left;padding:10px 16px;background:rgba(0,212,255,.1);border-bottom:1px solid var(--border)}
+.ov-table-wrap.gold .ov-table th{background:rgba(251,191,36,.1)}
+.ov-table td{padding:9px 16px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--sub)}
+.ov-table td.ovn{color:var(--text);font-weight:600}.ov-table td.ovp{color:var(--cyan);font-weight:700}.ov-table tr.done-row td{color:var(--ok)}
+.ms{border:1px solid var(--border);border-radius:16px;background:var(--card);padding:24px 28px 20px;margin-bottom:22px}
+.ms-head{border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:16px}
+.ms-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.ms-title h2{font-size:20px;font-weight:800}
+.ms-title h2 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{font-size:12px;font-weight:600;color:var(--cyan);border:1px solid rgba(0,212,255,.35);border-radius:20px;padding:2px 12px;background:rgba(0,212,255,.08)}
+.chip.gold{color:var(--gold);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}.chip.gray{color:var(--sub);border-color:var(--border)}
+.ms-goal{font-size:13px;color:var(--sub);margin-top:6px}.ms-goal b{color:var(--text)}
+.ms-stats{display:flex;align-items:center;gap:12px;margin-top:12px}.ms-stats .bar{flex:1;height:7px}.ms-stats .count{font-size:13px;font-weight:700;color:var(--cyan);white-space:nowrap}.ms-stats .count.finit{color:var(--ok)}
+h3.grp{font-size:15px;font-weight:700;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+h3.grp::before{content:'';width:4px;height:15px;border-radius:2px;background:linear-gradient(180deg,var(--cyan),var(--purple))}
+h3.grp small{font-size:12px;color:var(--sub);font-weight:500}h3.grp.acc{color:var(--ok)}h3.grp.acc::before{background:var(--ok)}
+ul.tasks{list-style:none}ul.tasks li.task{display:flex;gap:10px;padding:7px 10px;border-radius:9px}ul.tasks li.task:hover{background:rgba(255,255,255,.04)}
+ul.tasks li.task input[type=checkbox]{appearance:none;-webkit-appearance:none;width:18px;height:18px;margin-top:4px;border:2px solid rgba(255,255,255,.28);border-radius:5px;cursor:pointer;position:relative;flex-shrink:0}
+ul.tasks li.task input[type=checkbox]:checked{background:linear-gradient(135deg,var(--cyan),var(--purple));border-color:transparent}
+ul.tasks li.task input[type=checkbox]:checked::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#0b1020;font-size:12px;font-weight:900}
+ul.tasks li.task label{cursor:pointer;flex:1;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:14px}
+.tid{font-family:Consolas,monospace;font-size:12px;font-weight:700;color:var(--purple);background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.3);border-radius:5px;padding:0 6px}
+.tt{color:var(--text)}li.task.done .tt{color:var(--sub);text-decoration:line-through}li.task.done input[type=checkbox]:checked{background:var(--ok)}
+.feat-card{border:1px solid var(--border);border-radius:12px;background:var(--card);padding:14px 16px;margin-bottom:12px}
+.feat-card h4{font-size:14px;margin-bottom:8px;color:var(--cyan)}
+.feat-card table{width:100%;border-collapse:collapse;font-size:13px}
+.feat-card th,.feat-card td{text-align:left;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--sub)}
+.feat-card th{color:var(--text)}.feat-card td:first-child{color:var(--text);font-weight:600}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;border:1px solid var(--border)}
+.badge.p0{color:var(--cyan);border-color:rgba(0,212,255,.35)}.badge.p1{color:var(--gold);border-color:rgba(251,191,36,.35)}.badge.p2{color:var(--sub)}
+.risk-table-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card);margin-bottom:22px}
+table.risk{width:100%;border-collapse:collapse;font-size:13.5px}
+table.risk th{text-align:left;padding:10px 14px;background:rgba(124,92,255,.12);border-bottom:1px solid var(--border)}
+table.risk td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--sub);vertical-align:top}
+table.risk td:first-child{color:var(--text);font-weight:600}
+footer.foot{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px}
+@media(max-width:600px){body{padding:16px 12px 40px}#sidenav{display:none}}
+#sidenav{position:fixed;top:0;left:0;width:180px;height:100vh;overflow-y:auto;z-index:50;padding:16px 0 24px;background:rgba(11,16,32,.85);border-right:1px solid var(--border)}
+#sidenav .nav-brand{font-size:13px;font-weight:700;padding:0 16px 12px;margin-bottom:8px;border-bottom:1px solid var(--border)}
+#sidenav .nav-section{font-size:10px;font-weight:700;color:var(--sub);padding:10px 16px 4px;letter-spacing:1px;text-transform:uppercase}
+#sidenav a.nav-link{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sub);text-decoration:none;padding:5px 16px;border-left:2px solid transparent}
+#sidenav a.nav-link:hover{color:var(--text);background:rgba(255,255,255,.04)}
+#sidenav a.nav-link.active{color:var(--cyan);border-left-color:var(--cyan);background:rgba(0,212,255,.06)}
+#sidenav a.nav-link.p2.active{color:var(--gold);border-left-color:var(--gold);background:rgba(251,191,36,.06)}
+#sidenav a.nav-link .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--sub);opacity:.5}
+#sidenav a.nav-link .nav-dot.p1{background:var(--cyan)}#sidenav a.nav-link .nav-dot.p2{background:var(--gold)}
+#sidenav a.nav-link .nav-pct{margin-left:auto;font-size:10px;font-weight:700;opacity:.7}
+</style>
+</head>
+<body>
+<nav id="sidenav">
+  <div class="nav-brand">DrawPhysicsHub</div>
+  <div class="nav-section">总览</div>
+  <a class="nav-link" href="#hero"><span class="nav-dot"></span>顶部概览</a>
+  <a class="nav-link" href="#features"><span class="nav-dot"></span>功能点</a>
+  <a class="nav-link" href="#feat-subjects"><span class="nav-dot"></span>科目分类</a>
+  <a class="nav-link" href="#ov1"><span class="nav-dot"></span>一期总览</a>
+  <a class="nav-link" href="#ov2"><span class="nav-dot"></span>二期总览</a>
+  <div class="nav-section">一期</div>
+  <a class="nav-link" href="#M1"><span class="nav-dot p1"></span>M1 引擎骨架<span class="nav-pct" id="nav-M1">0%</span></a>
+  <a class="nav-link" href="#M2"><span class="nav-dot p1"></span>M2 播放器<span class="nav-pct" id="nav-M2">0%</span></a>
+  <a class="nav-link" href="#M3"><span class="nav-dot p1"></span>M3 场景模板<span class="nav-pct" id="nav-M3">0%</span></a>
+  <a class="nav-link" href="#M4"><span class="nav-dot p1"></span>M4 力学包<span class="nav-pct" id="nav-M4">0%</span></a>
+  <a class="nav-link" href="#M5"><span class="nav-dot p1"></span>M5 电磁光学<span class="nav-pct" id="nav-M5">0%</span></a>
+  <a class="nav-link" href="#M6"><span class="nav-dot p1"></span>M6 一期验收<span class="nav-pct" id="nav-M6">0%</span></a>
+  <div class="nav-section">二期</div>
+  <a class="nav-link p2" href="#M7"><span class="nav-dot p2"></span>M7 热学近代<span class="nav-pct" id="nav-M7">0%</span></a>
+  <a class="nav-link p2" href="#M8"><span class="nav-dot p2"></span>M8 进阶扩包<span class="nav-pct" id="nav-M8">0%</span></a>
+  <a class="nav-link p2" href="#M9"><span class="nav-dot p2"></span>M9 超越能力<span class="nav-pct" id="nav-M9">0%</span></a>
+  <div class="nav-section">其他</div>
+  <a class="nav-link" href="#BK"><span class="nav-dot"></span>Backlog</a>
+  <a class="nav-link" href="#risk"><span class="nav-dot"></span>风险与依赖</a>
+  <a class="nav-link" href="#convention"><span class="nav-dot"></span>勾选约定</a>
+</nav>
+
+<header class="hero" id="hero">
+  <h1>DrawPhysicsHub — <em>开发计划</em></h1>
+  <div class="meta">
+    <span>关联评估：<b>vue-threejs-物理可视化可行性评估.md</b></span>
+    <span>计划版本：<b>v1.2</b></span>
+    <span>日期：<b>2026-11-15</b></span>
+    <span>分期：一期约 10 周 + 二期约 8 周+</span>
+  </div>
+  <div class="overall">
+    <div class="row"><span class="label">总体进度（全部任务）</span><span class="pct" id="ovPct">0%</span></div>
+    <div class="bar"><i id="ovBar"></i></div>
+    <div class="substat" id="ovSub">一期 0 / 0 · 二期 0 / 0 · Backlog 0 / 0</div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <label class="btn" for="impFile">导入进度</label>
+  <input type="file" id="impFile" accept=".json">
+  <button type="button" id="expBtn">导出进度</button>
+  <button type="button" class="danger" id="resetBtn">重置进度</button>
+</div>
+
+<div class="note" id="features">
+  <b>产品原则</b>
+  <ul>
+    <li>参考既有教学演示的<strong>教学意图与科目分类</strong>，不 1:1 克隆第三方动态几何构造树 / CAS</li>
+    <li>架构：<b>物理模型层</b>（可单测）+ <b>渲染层</b>（Canvas2D / Three.js / Chart）+ Vue 应用壳</li>
+    <li>产能靠<strong>场景模板</strong>复用；内容按科目包迭代，不做 1900 全量搬迁</li>
+    <li>超越点：性能、移动端、对比双视图、课程路径、自动化抽检、无外挂运行时</li>
+    <li><b>文档双端</b>：同名 <code>.md</code> 供 AI；本 HTML 供人工勾选，进度须同步</li>
+  </ul>
+</div>
+
+<div class="feat-card">
+  <h4>平台能力功能点</h4>
+  <table>
+    <tr><th>模块</th><th>功能点</th><th>优先级</th></tr>
+    <tr><td>物理模型层</td><td>解析公式、ODE(RK4)、随机过程、场采样 API、单测</td><td><span class="badge p0">P0</span></td></tr>
+    <tr><td>渲染层</td><td>Canvas2D / Three.js / 图表适配器</td><td><span class="badge p0">P0</span></td></tr>
+    <tr><td>Demo 协议</td><td>DemoMeta · params · model · views · docs</td><td><span class="badge p0">P0</span></td></tr>
+    <tr><td>播放器</td><td>播放控制、参数滑块、公式面板(KaTeX)</td><td><span class="badge p0">P0</span></td></tr>
+    <tr><td>目录</td><td>学科→分类→演示、搜索、标签、缩略图</td><td><span class="badge p0">P0</span></td></tr>
+    <tr><td>教学质量</td><td>极限断言、数值抽检、文案公式联动</td><td><span class="badge p1">P1</span></td></tr>
+    <tr><td>课程包</td><td>章节路径、课次集合、对比双视图</td><td><span class="badge p1">P1</span></td></tr>
+    <tr><td>批注</td><td>画笔 / 箭头 / 文字（教学板书）</td><td><span class="badge p2">P2</span></td></tr>
+    <tr><td>作者工具</td><td>参数化生成器（不做通用动态几何白板）</td><td><span class="badge p2">P3</span></td></tr>
+  </table>
+</div>
+
+<div class="feat-card">
+  <h4>场景模板（跨科目复用）</h4>
+  <table>
+    <tr><th>模板</th><th>覆盖举例</th></tr>
+    <tr><td>T-Particle2D</td><td>力学 / 大学物理 / 理论力学</td></tr>
+    <tr><td>T-Rigid2D</td><td>刚体滚动、定轴转动</td></tr>
+    <tr><td>T-Oscillator</td><td>简谐 / 阻尼 / 受迫 / 相图</td></tr>
+    <tr><td>T-Wave2D</td><td>波动、干涉、驻波</td></tr>
+    <tr><td>T-VectorField3D</td><td>电磁场、偶极</td></tr>
+    <tr><td>T-RayOptics</td><td>光路、偏振</td></tr>
+    <tr><td>T-ParticleGas</td><td>分子动理论</td></tr>
+    <tr><td>T-PlotThermo</td><td>P-V / 分布曲线</td></tr>
+    <tr><td>T-WaveFunction</td><td>势阱、隧道、本征态</td></tr>
+    <tr><td>T-Lattice</td><td>晶格链 + 色散</td></tr>
+    <tr><td>T-ComplexSurf</td><td>复变曲面</td></tr>
+    <tr><td>T-ScatterOrbit</td><td>散射数值轨道</td></tr>
+  </table>
+</div>
+
+<div class="feat-card" id="feat-subjects">
+  <h4>科目 × 分类（内容功能点 · 参考公开教学演示主题）</h4>
+  <table>
+    <tr><th>科目</th><th>分类</th><th>期次</th></tr>
+    <tr><td>力学 S1</td><td>质点运动学 · 动量 · 动能势能 · 角动量 · 刚体 · 振动 · 波动 · 弹性</td><td>一期重点 / 弹性二期</td></tr>
+    <tr><td>理论力学 S2</td><td>质点 · 质点组 · 刚体 · 转动参考系 · 分析力学</td><td>二期</td></tr>
+    <tr><td>大学物理 S3</td><td>力学→热→电磁→振动波动→光学→近代（按章代表演示）</td><td>一期精选 / 二期课次包</td></tr>
+    <tr><td>电磁学 S4</td><td>静电场 · 偶极 · 电流磁场 · 洛伦兹/安培 · 感应</td><td>一期</td></tr>
+    <tr><td>电动力学 S5</td><td>传播 · 双折射 · 辐射 · 相对论</td><td>二期</td></tr>
+    <tr><td>光学 S6</td><td>几何光学 · 干涉 · 衍射 · 偏振</td><td>一期</td></tr>
+    <tr><td>热学 S7</td><td>分子动理论 · 输运 · 热力学一/二定律 · 分布与熵 · 相变</td><td>二期</td></tr>
+    <tr><td>量子 / 原子 S8-9</td><td>波函数 · 势阱/势垒 · 双缝 · 光电/康普顿 · 散射 · 能级自旋</td><td>二期</td></tr>
+    <tr><td>数物方法 S10</td><td>复变 2D/3D · 傅里叶 · 球谐 · PDE 模态</td><td>二期偏后</td></tr>
+    <tr><td>晶格振动 S11</td><td>单/双原子链 · 声子谱 · 石墨烯模式</td><td>二期偏后</td></tr>
+  </table>
+</div>
+
+<div class="ov-table-wrap" id="ov1">
+  <h4>一期 — 引擎 + 样板（约 10 周）</h4>
+  <table class="ov-table">
+    <thead><tr><th>里程碑</th><th>周期</th><th>任务数</th><th>进度</th></tr></thead>
+    <tbody>
+      <tr data-ov="M1"><td class="ovn">M1 引擎骨架</td><td>2 周</td><td>16</td><td class="ovp" id="ov-M1">0 / 16</td></tr>
+      <tr data-ov="M2"><td class="ovn">M2 播放器与目录</td><td>1.5 周</td><td>14</td><td class="ovp" id="ov-M2">0 / 14</td></tr>
+      <tr data-ov="M3"><td class="ovn">M3 场景模板核心</td><td>2 周</td><td>18</td><td class="ovp" id="ov-M3">0 / 18</td></tr>
+      <tr data-ov="M4"><td class="ovn">M4 力学样板包</td><td>2 周</td><td>16</td><td class="ovp" id="ov-M4">0 / 16</td></tr>
+      <tr data-ov="M5"><td class="ovn">M5 电磁与光学样板</td><td>2 周</td><td>16</td><td class="ovp" id="ov-M5">0 / 16</td></tr>
+      <tr data-ov="M6"><td class="ovn">M6 发布与一期验收</td><td>0.5 周</td><td>10</td><td class="ovp" id="ov-M6">0 / 10</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="ov-table-wrap gold" id="ov2">
+  <h4 class="gold">二期 — 扩包 + 超越（约 8 周+）</h4>
+  <table class="ov-table">
+    <thead><tr><th>里程碑</th><th>周期</th><th>任务数</th><th>进度</th></tr></thead>
+    <tbody>
+      <tr data-ov="M7"><td class="ovn">M7 热学与近代物理</td><td>3 周</td><td>18</td><td class="ovp" id="ov-M7">0 / 18</td></tr>
+      <tr data-ov="M8"><td class="ovn">M8 进阶科目扩包</td><td>3 周</td><td>14</td><td class="ovp" id="ov-M8">0 / 14</td></tr>
+      <tr data-ov="M9"><td class="ovn">M9 超越能力</td><td>2 周+</td><td>16</td><td class="ovp" id="ov-M9">0 / 16</td></tr>
+      <tr data-ov="BK"><td class="ovn">P3 待排期 Backlog</td><td>—</td><td>20</td><td class="ovp" id="ov-BK">0 / 20</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<span class="phase-tag p1">一期</span>
+<section class="ms" data-ms="M1" id="M1">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M1</em> — 引擎骨架</h2><span class="chip">2 周</span></div>
+<p class="ms-goal">目标：<b>跑通「DemoMeta → 模型 tick → 多适配器渲染」</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M1"></i></div><span class="count" id="cnt-M1">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M1-A">M1-A 工程与协议</h3>
+<ul class="tasks">
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-01" id="t-M1-01" checked><label for="t-M1-01"><span class="tid">M1-01</span><span class="tt">脚手架：Vue 3 + TypeScript + Vite + Pinia + Vue Router</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-02" id="t-M1-02" checked><label for="t-M1-02"><span class="tid">M1-02</span><span class="tt">包结构：core/physics · core/render · demos · app</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-03" id="t-M1-03" checked><label for="t-M1-03"><span class="tid">M1-03</span><span class="tt">DemoMeta schema：id / subject / category / params / views / docs</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-04" id="t-M1-04" checked><label for="t-M1-04"><span class="tid">M1-04</span><span class="tt">参数协议：number / boolean / select / vec + 约束与单位</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-05" id="t-M1-05" checked><label for="t-M1-05"><span class="tid">M1-05</span><span class="tt">物理模型接口：init / step(dt) / observe() / reset</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M1-B">M1-B 模型层基础</h3>
+<ul class="tasks">
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-06" id="t-M1-06" checked><label for="t-M1-06"><span class="tid">M1-06</span><span class="tt">math 工具：向量、矩阵、插值</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-07" id="t-M1-07" checked><label for="t-M1-07"><span class="tid">M1-07</span><span class="tt">ODE RK4 步进器 + 单测</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-08" id="t-M1-08" checked><label for="t-M1-08"><span class="tid">M1-08</span><span class="tt">解析表达式安全求值（受限，禁止任意代码）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-09" id="t-M1-09" checked><label for="t-M1-09"><span class="tid">M1-09</span><span class="tt">场采样网格 API（规则网格 → 矢量/标量）</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M1-C">M1-C 渲染适配器</h3>
+<ul class="tasks">
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-10" id="t-M1-10" checked><label for="t-M1-10"><span class="tid">M1-10</span><span class="tt">Canvas2D 适配器：点 / 线 / 箭头 / 轨迹</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-11" id="t-M1-11" checked><label for="t-M1-11"><span class="tid">M1-11</span><span class="tt">Three.js 场景宿主：相机 / 灯光 / resize / dispose</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-12" id="t-M1-12" checked><label for="t-M1-12"><span class="tid">M1-12</span><span class="tt">图表适配器：折线 / 面积（ECharts 或 uPlot）</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-13" id="t-M1-13" checked><label for="t-M1-13"><span class="tid">M1-13</span><span class="tt">KaTeX 公式组件</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-14" id="t-M1-14" checked><label for="t-M1-14"><span class="tid">M1-14</span><span class="tt">首个 HelloDemo（抛体）三视图联调</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-15" id="t-M1-15" checked><label for="t-M1-15"><span class="tid">M1-15</span><span class="tt">CI：类型检查 + physics 单测</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M1-16" id="t-M1-16" checked><label for="t-M1-16"><span class="tid">M1-16</span><span class="tt">文档：架构 README（模型/渲染边界）</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M1">M1 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task done"><input type="checkbox" class="ck-accept" data-id="M1-A1" id="t-M1-A1" checked><label for="t-M1-A1"><span class="tid">M1-A1</span><span class="tt">HelloDemo 可调参动画，画面正确</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-accept" data-id="M1-A2" id="t-M1-A2" checked><label for="t-M1-A2"><span class="tid">M1-A2</span><span class="tt">RK4 单测通过</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-accept" data-id="M1-A3" id="t-M1-A3" checked><label for="t-M1-A3"><span class="tid">M1-A3</span><span class="tt">切换视图不泄漏 WebGL 上下文</span></label></li>
+</ul>
+</section><span class="phase-tag p1">一期</span>
+<section class="ms" data-ms="M2" id="M2">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M2</em> — 播放器与目录</h2><span class="chip">1.5 周</span></div>
+<p class="ms-goal">目标：<b>教学浏览体验闭环：浏览 → 打开 → 调参 → 播放</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M2"></i></div><span class="count" id="cnt-M2">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M2-A">M2-A 应用壳与目录</h3>
+<ul class="tasks">
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-01" id="t-M2-01" checked><label for="t-M2-01"><span class="tid">M2-01</span><span class="tt">应用壳：顶栏 + 演示三栏（控制台 / 解析 / 视口）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-02" id="t-M2-02"><label for="t-M2-02"><span class="tid">M2-02</span><span class="tt">学科→分类→演示树（静态 JSON 清单）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-03" id="t-M2-03"><label for="t-M2-03"><span class="tid">M2-03</span><span class="tt">搜索与标签过滤</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-04" id="t-M2-04" checked><label for="t-M2-04"><span class="tid">M2-04</span><span class="tt">演示路由深链 /s/:subject/:demoId</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-08" id="t-M2-08"><label for="t-M2-08"><span class="tid">M2-08</span><span class="tt">缩略图与卡片列表</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-13" id="t-M2-13"><label for="t-M2-13"><span class="tid">M2-13</span><span class="tt">主题：浅色教学默认</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-14" id="t-M2-14"><label for="t-M2-14"><span class="tid">M2-14</span><span class="tt">i18n 预留（中文优先）</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M2-B">M2-B 播放与说明</h3>
+<ul class="tasks">
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-05" id="t-M2-05" checked><label for="t-M2-05"><span class="tid">M2-05</span><span class="tt">播放控制：播放 / 暂停 / 复位 / 倍率 + 时间轴 scrub</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-06" id="t-M2-06" checked><label for="t-M2-06"><span class="tid">M2-06</span><span class="tt">参数面板：滑块实时驱动模型</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-07" id="t-M2-07" checked><label for="t-M2-07"><span class="tid">M2-07</span><span class="tt">说明区：概念解释、教学目标、分步公式代入、挑战卡</span></label></li>
+<li class="task done"><input type="checkbox" class="ck-task" data-id="M2-09" id="t-M2-09" checked><label for="t-M2-09"><span class="tid">M2-09</span><span class="tt">2D / 3D / 图表 Tab 切换（含坐标系）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-10" id="t-M2-10"><label for="t-M2-10"><span class="tid">M2-10</span><span class="tt">全屏演示模式</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-11" id="t-M2-11"><label for="t-M2-11"><span class="tid">M2-11</span><span class="tt">错误边界：模型异常降级提示</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M2-12" id="t-M2-12"><label for="t-M2-12"><span class="tid">M2-12</span><span class="tt">性能 HUD（可选 FPS / 粒子数）</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M2">M2 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M2-A1" id="t-M2-A1"><label for="t-M2-A1"><span class="tid">M2-A1</span><span class="tt">从目录打开演示全链路可用</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M2-A2" id="t-M2-A2"><label for="t-M2-A2"><span class="tid">M2-A2</span><span class="tt">URL 刷新后状态可恢复</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M2-A3" id="t-M2-A3"><label for="t-M2-A3"><span class="tid">M2-A3</span><span class="tt">参数变更画面即时响应</span></label></li>
+</ul>
+</section><span class="phase-tag p1">一期</span>
+<section class="ms" data-ms="M3" id="M3">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M3</em> — 场景模板核心</h2><span class="chip">2 周</span></div>
+<p class="ms-goal">目标：<b>6 个可复用模板就绪，后续内容以填参数为主</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M3"></i></div><span class="count" id="cnt-M3">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M3-A">M3-A 模板注册与六核心</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-01" id="t-M3-01"><label for="t-M3-01"><span class="tid">M3-01</span><span class="tt">模板注册表 TemplateRegistry</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-02" id="t-M3-02"><label for="t-M3-02"><span class="tid">M3-02</span><span class="tt">T-Particle2D：多质点 + 轨迹 + 矢量叠加</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-03" id="t-M3-03"><label for="t-M3-03"><span class="tid">M3-03</span><span class="tt">T-Rigid2D：圆/杆刚体 + 约束示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-04" id="t-M3-04"><label for="t-M3-04"><span class="tid">M3-04</span><span class="tt">T-Oscillator：位移-时间 + 相图</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-05" id="t-M3-05"><label for="t-M3-05"><span class="tid">M3-05</span><span class="tt">T-Wave2D：波面网格 / 干涉条纹</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-06" id="t-M3-06"><label for="t-M3-06"><span class="tid">M3-06</span><span class="tt">T-VectorField3D：箭头场 + 稀疏流线</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-07" id="t-M3-07"><label for="t-M3-07"><span class="tid">M3-07</span><span class="tt">T-RayOptics：光线与偏振椭圆</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-08" id="t-M3-08"><label for="t-M3-08"><span class="tid">M3-08</span><span class="tt">模板参数 schema 校验</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M3-B">M3-B 性能与体验</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-09" id="t-M3-09"><label for="t-M3-09"><span class="tid">M3-09</span><span class="tt">轨迹缓冲性能（环形缓冲）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-10" id="t-M3-10"><label for="t-M3-10"><span class="tid">M3-10</span><span class="tt">场线稀疏采样策略（防卡顿）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-11" id="t-M3-11"><label for="t-M3-11"><span class="tid">M3-11</span><span class="tt">实例化 / 点精灵粒子基类（供热学复用）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-12" id="t-M3-12"><label for="t-M3-12"><span class="tid">M3-12</span><span class="tt">相机预设：俯视 / 透视 / 正交</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-13" id="t-M3-13"><label for="t-M3-13"><span class="tid">M3-13</span><span class="tt">坐标轴与单位网格组件</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-14" id="t-M3-14"><label for="t-M3-14"><span class="tid">M3-14</span><span class="tt">颜色映射（标量→色带）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-15" id="t-M3-15"><label for="t-M3-15"><span class="tid">M3-15</span><span class="tt">模板 playground / Storybook</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-16" id="t-M3-16"><label for="t-M3-16"><span class="tid">M3-16</span><span class="tt">模板文档：何时用哪套</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-17" id="t-M3-17"><label for="t-M3-17"><span class="tid">M3-17</span><span class="tt">对比模式骨架（双实例并排）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M3-18" id="t-M3-18"><label for="t-M3-18"><span class="tid">M3-18</span><span class="tt">移动端参数抽屉</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M3">M3 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M3-A1" id="t-M3-A1"><label for="t-M3-A1"><span class="tid">M3-A1</span><span class="tt">六模板各有 1 个示例 Demo</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M3-A2" id="t-M3-A2"><label for="t-M3-A2"><span class="tid">M3-A2</span><span class="tt">同屏约 1e4 级箭头场中档机 ≥30fps</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M3-A3" id="t-M3-A3"><label for="t-M3-A3"><span class="tid">M3-A3</span><span class="tt">模板销毁无泄漏</span></label></li>
+</ul>
+</section><span class="phase-tag p1">一期</span>
+<section class="ms" data-ms="M4" id="M4">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M4</em> — 力学样板包</h2><span class="chip">2 周</span></div>
+<p class="ms-goal">目标：<b>≥12 个力学演示达标，建立内容规范</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M4"></i></div><span class="count" id="cnt-M4">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M4-A">M4-A 规范与运动学/动力学</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-01" id="t-M4-01"><label for="t-M4-01"><span class="tid">M4-01</span><span class="tt">内容规范：命名、参数单位、验收清单</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-02" id="t-M4-02"><label for="t-M4-02"><span class="tid">M4-02</span><span class="tt">抛体运动</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-03" id="t-M4-03"><label for="t-M4-03"><span class="tid">M4-03</span><span class="tt">自然坐标系速度/加速度</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-04" id="t-M4-04"><label for="t-M4-04"><span class="tid">M4-04</span><span class="tt">动量守恒碰撞</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-13" id="t-M4-13"><label for="t-M4-13"><span class="tid">M4-13</span><span class="tt">角动量对点（示意）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-14" id="t-M4-14"><label for="t-M4-14"><span class="tid">M4-14</span><span class="tt">机械能 / 势能曲线联动</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M4-B">M4-B 振动波动与刚体</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-05" id="t-M4-05"><label for="t-M4-05"><span class="tid">M4-05</span><span class="tt">简谐振动</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-06" id="t-M4-06"><label for="t-M4-06"><span class="tid">M4-06</span><span class="tt">阻尼振动</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-07" id="t-M4-07"><label for="t-M4-07"><span class="tid">M4-07</span><span class="tt">受迫振动与共振</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-08" id="t-M4-08"><label for="t-M4-08"><span class="tid">M4-08</span><span class="tt">无滑滚动（平面）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-09" id="t-M4-09"><label for="t-M4-09"><span class="tid">M4-09</span><span class="tt">定轴转动 / 角速度</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-10" id="t-M4-10"><label for="t-M4-10"><span class="tid">M4-10</span><span class="tt">单摆 / 复摆（选一深化）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-11" id="t-M4-11"><label for="t-M4-11"><span class="tid">M4-11</span><span class="tt">横波形成与传播</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-12" id="t-M4-12"><label for="t-M4-12"><span class="tid">M4-12</span><span class="tt">驻波</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-15" id="t-M4-15"><label for="t-M4-15"><span class="tid">M4-15</span><span class="tt">力学包目录 JSON 与封面</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M4-16" id="t-M4-16"><label for="t-M4-16"><span class="tid">M4-16</span><span class="tt">力学包抽检报告（数值极限）</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M4">M4 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M4-A1" id="t-M4-A1"><label for="t-M4-A1"><span class="tid">M4-A1</span><span class="tt">≥12 个力学演示可玩</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M4-A2" id="t-M4-A2"><label for="t-M4-A2"><span class="tid">M4-A2</span><span class="tt">每演示含公式与说明</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M4-A3" id="t-M4-A3"><label for="t-M4-A3"><span class="tid">M4-A3</span><span class="tt">至少 3 个含自动化数值断言</span></label></li>
+</ul>
+</section><span class="phase-tag p1">一期</span>
+<section class="ms" data-ms="M5" id="M5">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M5</em> — 电磁与光学样板</h2><span class="chip">2 周</span></div>
+<p class="ms-goal">目标：<b>≥12 个电磁/光学演示达标</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M5"></i></div><span class="count" id="cnt-M5">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M5-A">M5-A 电磁</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-01" id="t-M5-01"><label for="t-M5-01"><span class="tid">M5-01</span><span class="tt">点电荷电场叠加</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-02" id="t-M5-02"><label for="t-M5-02"><span class="tid">M5-02</span><span class="tt">电偶极子场（含极限过程）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-03" id="t-M5-03"><label for="t-M5-03"><span class="tid">M5-03</span><span class="tt">无限长直导线磁场</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-04" id="t-M5-04"><label for="t-M5-04"><span class="tid">M5-04</span><span class="tt">洛伦兹力回旋</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-05" id="t-M5-05"><label for="t-M5-05"><span class="tid">M5-05</span><span class="tt">磁通量 / 楞次定律示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-11" id="t-M5-11"><label for="t-M5-11"><span class="tid">M5-11</span><span class="tt">电磁包目录</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-13" id="t-M5-13"><label for="t-M5-13"><span class="tid">M5-13</span><span class="tt">场可视化：箭头密度自适应</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M5-B">M5-B 光学</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-06" id="t-M5-06"><label for="t-M5-06"><span class="tid">M5-06</span><span class="tt">双缝干涉条纹</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-07" id="t-M5-07"><label for="t-M5-07"><span class="tid">M5-07</span><span class="tt">单缝衍射</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-08" id="t-M5-08"><label for="t-M5-08"><span class="tid">M5-08</span><span class="tt">偏振片起偏检偏（马吕斯）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-09" id="t-M5-09"><label for="t-M5-09"><span class="tid">M5-09</span><span class="tt">波片与偏振态（线/圆/椭圆）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-10" id="t-M5-10"><label for="t-M5-10"><span class="tid">M5-10</span><span class="tt">反射折射光路</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-12" id="t-M5-12"><label for="t-M5-12"><span class="tid">M5-12</span><span class="tt">光学包目录</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-14" id="t-M5-14"><label for="t-M5-14"><span class="tid">M5-14</span><span class="tt">干涉强度公式与画面对照</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-15" id="t-M5-15"><label for="t-M5-15"><span class="tid">M5-15</span><span class="tt">3D 偏振演示相机引导</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M5-16" id="t-M5-16"><label for="t-M5-16"><span class="tid">M5-16</span><span class="tt">电磁/光学抽检报告</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M5">M5 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M5-A1" id="t-M5-A1"><label for="t-M5-A1"><span class="tid">M5-A1</span><span class="tt">≥12 个电磁/光学演示可玩</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M5-A2" id="t-M5-A2"><label for="t-M5-A2"><span class="tid">M5-A2</span><span class="tt">场 / 干涉与教材定性一致</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M5-A3" id="t-M5-A3"><label for="t-M5-A3"><span class="tid">M5-A3</span><span class="tt">原「超慢」类场景自研后可流畅</span></label></li>
+</ul>
+</section><span class="phase-tag p1">一期</span>
+<section class="ms" data-ms="M6" id="M6">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M6</em> — 发布与一期验收</h2><span class="chip">0.5 周</span></div>
+<p class="ms-goal">目标：<b>生产可访问、性能基线达标、无外挂第三方课件引擎</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M6"></i></div><span class="count" id="cnt-M6">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M6-A">M6-A 发布与验收</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-01" id="t-M6-01"><label for="t-M6-01"><span class="tid">M6-01</span><span class="tt">生产构建与静态部署</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-02" id="t-M6-02"><label for="t-M6-02"><span class="tid">M6-02</span><span class="tt">演示清单自动生成脚本</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-03" id="t-M6-03"><label for="t-M6-03"><span class="tid">M6-03</span><span class="tt">SEO / 分享：OG 标题与缩略图</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-04" id="t-M6-04"><label for="t-M6-04"><span class="tid">M6-04</span><span class="tt">性能基线文档（目标机型）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-05" id="t-M6-05"><label for="t-M6-05"><span class="tid">M6-05</span><span class="tt">无障碍：键盘可操作播放</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-06" id="t-M6-06"><label for="t-M6-06"><span class="tid">M6-06</span><span class="tt">一期 Demo 总数达标（≥30）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-07" id="t-M6-07"><label for="t-M6-07"><span class="tid">M6-07</span><span class="tt">已知问题列表</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-08" id="t-M6-08"><label for="t-M6-08"><span class="tid">M6-08</span><span class="tt">与评估文档对照更新</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-09" id="t-M6-09"><label for="t-M6-09"><span class="tid">M6-09</span><span class="tt">演示录屏 / 截图素材</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M6-10" id="t-M6-10"><label for="t-M6-10"><span class="tid">M6-10</span><span class="tt">一期评审会清单</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M6">M6 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M6-A1" id="t-M6-A1"><label for="t-M6-A1"><span class="tid">M6-A1</span><span class="tt">生产环境可访问全部一期演示</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M6-A2" id="t-M6-A2"><label for="t-M6-A2"><span class="tid">M6-A2</span><span class="tt">中档机主流演示 ≥30fps</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M6-A3" id="t-M6-A3"><label for="t-M6-A3"><span class="tid">M6-A3</span><span class="tt">运行时无外挂第三方课件引擎</span></label></li>
+</ul>
+</section><span class="phase-tag p2">二期</span>
+<section class="ms" data-ms="M7" id="M7">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M7</em> — 热学与近代物理</h2><span class="chip gold">3 周</span></div>
+<p class="ms-goal">目标：<b>热学 + 量子/原子代表包可用</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M7"></i></div><span class="count" id="cnt-M7">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M7-A">M7-A 热学</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-01" id="t-M7-01"><label for="t-M7-01"><span class="tid">M7-01</span><span class="tt">T-ParticleGas 钢球碰撞 / 压强示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-02" id="t-M7-02"><label for="t-M7-02"><span class="tid">M7-02</span><span class="tt">麦克斯韦速率分布图</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-03" id="t-M7-03"><label for="t-M7-03"><span class="tid">M7-03</span><span class="tt">平均自由程 / 扩散</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-04" id="t-M7-04"><label for="t-M7-04"><span class="tid">M7-04</span><span class="tt">准静态过程功（P-V）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-05" id="t-M7-05"><label for="t-M7-05"><span class="tid">M7-05</span><span class="tt">卡诺循环示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-14" id="t-M7-14"><label for="t-M7-14"><span class="tid">M7-14</span><span class="tt">热学包目录</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-17" id="t-M7-17"><label for="t-M7-17"><span class="tid">M7-17</span><span class="tt">热学粒子性能护栏</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M7-B">M7-B 量子 / 原子</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-06" id="t-M7-06"><label for="t-M7-06"><span class="tid">M7-06</span><span class="tt">T-WaveFunction 无限深势阱</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-07" id="t-M7-07"><label for="t-M7-07"><span class="tid">M7-07</span><span class="tt">势垒隧道概率流</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-08" id="t-M7-08"><label for="t-M7-08"><span class="tid">M7-08</span><span class="tt">谐振子本征态</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-09" id="t-M7-09"><label for="t-M7-09"><span class="tid">M7-09</span><span class="tt">光电效应装置示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-10" id="t-M7-10"><label for="t-M7-10"><span class="tid">M7-10</span><span class="tt">康普顿散射几何</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-11" id="t-M7-11"><label for="t-M7-11"><span class="tid">M7-11</span><span class="tt">双缝（波）示意增强</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-12" id="t-M7-12"><label for="t-M7-12"><span class="tid">M7-12</span><span class="tt">α 散射轨道（Worker 数值）起步</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-13" id="t-M7-13"><label for="t-M7-13"><span class="tid">M7-13</span><span class="tt">黑体辐射曲线</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-15" id="t-M7-15"><label for="t-M7-15"><span class="tid">M7-15</span><span class="tt">量子/原子包目录</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-16" id="t-M7-16"><label for="t-M7-16"><span class="tid">M7-16</span><span class="tt">WebWorker 数值管线封装</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M7-18" id="t-M7-18"><label for="t-M7-18"><span class="tid">M7-18</span><span class="tt">M7 抽检报告</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M7">M7 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M7-A1" id="t-M7-A1"><label for="t-M7-A1"><span class="tid">M7-A1</span><span class="tt">热学 ≥8、近代物理 ≥8 演示</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M7-A2" id="t-M7-A2"><label for="t-M7-A2"><span class="tid">M7-A2</span><span class="tt">Worker 数值不卡主线程</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M7-A3" id="t-M7-A3"><label for="t-M7-A3"><span class="tid">M7-A3</span><span class="tt">分布 / 曲线与解析或教材一致</span></label></li>
+</ul>
+</section><span class="phase-tag p2">二期</span>
+<section class="ms" data-ms="M8" id="M8">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M8</em> — 进阶科目扩包</h2><span class="chip gold">3 周</span></div>
+<p class="ms-goal">目标：<b>理论力学 / 电动力学进阶 + 数物 / 晶格起步 + 大学物理课次包</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M8"></i></div><span class="count" id="cnt-M8">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M8-A">M8-A 理论力学与电动力学</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-01" id="t-M8-01"><label for="t-M8-01"><span class="tid">M8-01</span><span class="tt">科里奥利可视化</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-02" id="t-M8-02"><label for="t-M8-02"><span class="tid">M8-02</span><span class="tt">双摆数值</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-03" id="t-M8-03"><label for="t-M8-03"><span class="tid">M8-03</span><span class="tt">刚体进动示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-04" id="t-M8-04"><label for="t-M8-04"><span class="tid">M8-04</span><span class="tt">电磁波传播 / 反射系数示意</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-05" id="t-M8-05"><label for="t-M8-05"><span class="tid">M8-05</span><span class="tt">双折射斯涅耳作图</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-10" id="t-M8-10"><label for="t-M8-10"><span class="tid">M8-10</span><span class="tt">理论力学包目录</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-11" id="t-M8-11"><label for="t-M8-11"><span class="tid">M8-11</span><span class="tt">电动力学进阶目录</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M8-B">M8-B 数物 / 晶格 / 课次</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-06" id="t-M8-06"><label for="t-M8-06"><span class="tid">M8-06</span><span class="tt">T-ComplexSurf 复函数 3D</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-07" id="t-M8-07"><label for="t-M8-07"><span class="tid">M8-07</span><span class="tt">傅里叶级数波形重建</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-08" id="t-M8-08"><label for="t-M8-08"><span class="tid">M8-08</span><span class="tt">T-Lattice 单原子链振动</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-09" id="t-M8-09"><label for="t-M8-09"><span class="tid">M8-09</span><span class="tt">双原子链色散</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-12" id="t-M8-12"><label for="t-M8-12"><span class="tid">M8-12</span><span class="tt">数物 / 晶格起步目录</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-13" id="t-M8-13"><label for="t-M8-13"><span class="tid">M8-13</span><span class="tt">大学物理课次包 v1</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M8-14" id="t-M8-14"><label for="t-M8-14"><span class="tid">M8-14</span><span class="tt">M8 抽检报告</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M8">M8 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M8-A1" id="t-M8-A1"><label for="t-M8-A1"><span class="tid">M8-A1</span><span class="tt">四进阶方向各 ≥3 演示</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M8-A2" id="t-M8-A2"><label for="t-M8-A2"><span class="tid">M8-A2</span><span class="tt">大学物理课次可按章节浏览</span></label></li>
+</ul>
+</section><span class="phase-tag p2">二期</span>
+<section class="ms" data-ms="M9" id="M9">
+<div class="ms-head">
+<div class="ms-title"><h2><em>M9</em> — 超越能力</h2><span class="chip gold">2 周+</span></div>
+<p class="ms-goal">目标：<b>更快、可测、可移动、可对比、可课程化</b></p>
+<div class="ms-stats"><div class="bar"><i id="bar-M9"></i></div><span class="count" id="cnt-M9">0 / 0</span></div>
+</div>
+<h3 class="grp" id="grp-M9-A">M9-A 体验与能力跃迁</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-01" id="t-M9-01"><label for="t-M9-01"><span class="tid">M9-01</span><span class="tt">GPU / 着色器场线或密度（可选）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-02" id="t-M9-02"><label for="t-M9-02"><span class="tid">M9-02</span><span class="tt">对比双视图完善</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-03" id="t-M9-03"><label for="t-M9-03"><span class="tid">M9-03</span><span class="tt">课程路径与课次进度</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-04" id="t-M9-04"><label for="t-M9-04"><span class="tid">M9-04</span><span class="tt">移动端手势与布局打磨</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-05" id="t-M9-05"><label for="t-M9-05"><span class="tid">M9-05</span><span class="tt">教学批注层（画笔）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-06" id="t-M9-06"><label for="t-M9-06"><span class="tid">M9-06</span><span class="tt">演示导出短视频 / GIF（可选）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-07" id="t-M9-07"><label for="t-M9-07"><span class="tid">M9-07</span><span class="tt">无障碍与键盘全覆盖</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-08" id="t-M9-08"><label for="t-M9-08"><span class="tid">M9-08</span><span class="tt">暗色 / 投影模式（教室投影）</span></label></li>
+</ul>
+<h3 class="grp" id="grp-M9-B">M9-B 质量与产品化</h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-09" id="t-M9-09"><label for="t-M9-09"><span class="tid">M9-09</span><span class="tt">性能自动降级策略</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-10" id="t-M9-10"><label for="t-M9-10"><span class="tid">M9-10</span><span class="tt">演示质量评分卡</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-11" id="t-M9-11"><label for="t-M9-11"><span class="tid">M9-11</span><span class="tt">内容署名与许可页</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-12" id="t-M9-12"><label for="t-M9-12"><span class="tid">M9-12</span><span class="tt">埋点 / 使用统计（可选）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-13" id="t-M9-13"><label for="t-M9-13"><span class="tid">M9-13</span><span class="tt">多语言英文化试点</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-14" id="t-M9-14"><label for="t-M9-14"><span class="tid">M9-14</span><span class="tt">PWA 离线缓存试点</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-15" id="t-M9-15"><label for="t-M9-15"><span class="tid">M9-15</span><span class="tt">超越清单对照（相对既有案例 ≥5 项实证）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-task" data-id="M9-16" id="t-M9-16"><label for="t-M9-16"><span class="tid">M9-16</span><span class="tt">二期总验收</span></label></li>
+</ul>
+<h3 class="grp acc" id="accept-M9">M9 验收标准 <small>（全部通过才算里程碑完成）</small></h3>
+<ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M9-A1" id="t-M9-A1"><label for="t-M9-A1"><span class="tid">M9-A1</span><span class="tt">移动端可完成主流程</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M9-A2" id="t-M9-A2"><label for="t-M9-A2"><span class="tid">M9-A2</span><span class="tt">对比双视图可用</span></label></li>
+<li class="task"><input type="checkbox" class="ck-accept" data-id="M9-A3" id="t-M9-A3"><label for="t-M9-A3"><span class="tid">M9-A3</span><span class="tt">超越清单 ≥5 项有实证</span></label></li>
+</ul>
+</section>
+
+<span class="phase-tag p2">Backlog</span>
+<section class="ms" data-ms="BK" id="BK">
+  <div class="ms-head">
+    <div class="ms-title"><h2>P3 待排期 <em>Backlog</em></h2><span class="chip gray">未排期</span></div>
+    <p class="ms-goal">未纳入一/二期排期，<b>按需启动后纳入对应里程碑</b></p>
+    <div class="ms-stats"><div class="bar"><i id="bar-BK"></i></div><span class="count" id="cnt-BK">0 / 20</span></div>
+  </div>
+  <ul class="tasks">
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-01" id="t-B-01"><label for="t-B-01"><span class="tid">B-01</span><span class="tt">作者工具：可视化参数编排器</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-02" id="t-B-02"><label for="t-B-02"><span class="tid">B-02</span><span class="tt">通用动态几何白板——明确不做，仅调研备忘</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-03" id="t-B-03"><label for="t-B-03"><span class="tid">B-03</span><span class="tt">符号 CAS 服务端</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-04" id="t-B-04"><label for="t-B-04"><span class="tid">B-04</span><span class="tt">教师账号与班级课次</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-05" id="t-B-05"><label for="t-B-05"><span class="tid">B-05</span><span class="tt">学生实验报告自动生成</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-06" id="t-B-06"><label for="t-B-06"><span class="tid">B-06</span><span class="tt">VR / XR 演示</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-07" id="t-B-07"><label for="t-B-07"><span class="tid">B-07</span><span class="tt">流体真实感仿真</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-08" id="t-B-08"><label for="t-B-08"><span class="tid">B-08</span><span class="tt">商用素材版权审计流程</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-09" id="t-B-09"><label for="t-B-09"><span class="tid">B-09</span><span class="tt">与 LMS（慕课）对接</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-10" id="t-B-10"><label for="t-B-10"><span class="tid">B-10</span><span class="tt">演示 A/B 实验框架</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-11" id="t-B-11"><label for="t-B-11"><span class="tid">B-11</span><span class="tt">从参考工程 XML 提取参数草稿（辅助，非运行时）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-12" id="t-B-12"><label for="t-B-12"><span class="tid">B-12</span><span class="tt">白板录制回放</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-13" id="t-B-13"><label for="t-B-13"><span class="tid">B-13</span><span class="tt">公式手写识别</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-14" id="t-B-14"><label for="t-B-14"><span class="tid">B-14</span><span class="tt">社区投稿审核流</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-15" id="t-B-15"><label for="t-B-15"><span class="tid">B-15</span><span class="tt">单元课包付费 / 授权（若产品需要）</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-16" id="t-B-16"><label for="t-B-16"><span class="tid">B-16</span><span class="tt">WebGPU 试验通道</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-17" id="t-B-17"><label for="t-B-17"><span class="tid">B-17</span><span class="tt">高精度任意精度数值</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-18" id="t-B-18"><label for="t-B-18"><span class="tid">B-18</span><span class="tt">打印版讲义导出</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-19" id="t-B-19"><label for="t-B-19"><span class="tid">B-19</span><span class="tt">读屏无障碍完整支持</span></label></li>
+<li class="task"><input type="checkbox" class="ck-back" data-id="B-20" id="t-B-20"><label for="t-B-20"><span class="tid">B-20</span><span class="tt">多教师协作编辑</span></label></li>
+</ul>
+</section>
+
+<div class="risk-table-wrap" id="risk">
+  <table class="risk">
+    <thead><tr><th style="width:22%">风险 / 依赖</th><th style="width:14%">影响阶段</th><th>应对措施</th></tr></thead>
+    <tbody>
+      <tr><td>物理正确性争议</td><td>内容信任</td><td>模型单测 + 极限断言 + 教研抽检</td></tr>
+      <tr><td>Three.js 全上导致 2D 过重</td><td>一期 M1–M3</td><td>2D 默认 Canvas；3D 按需加载</td></tr>
+      <tr><td>内容产能不足</td><td>二期延期</td><td>模板化；每期「代表演示」而非全量</td></tr>
+      <tr><td>参考素材版权 / 署名</td><td>合规</td><td>只参考意图；自研实现；署名与许可页</td></tr>
+      <tr><td>数值散射 / PDE 过重</td><td>M7 / M8</td><td>WebWorker / WASM；预计算表</td></tr>
+      <tr><td>范围膨胀成通用动态几何软件</td><td>架构跑偏</td><td>禁止通用 CAS / 动态几何白板进主线</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note" id="convention">
+  <b>勾选约定</b>
+  <ul>
+    <li>任务完成 → 勾选复选框，提交信息引用任务编号（如 <b>feat(physics): M1-07 RK4</b>）</li>
+    <li>里程碑内任务全部勾选 + 验收标准全部通过 → 里程碑完成</li>
+    <li>任务取消 / 顺延 → 取消勾选并在 MD 版注明</li>
+    <li><b>双端同步</b>：同时改 <code>DrawPhysicsHub开发计划.md</code> 与本 HTML</li>
+    <li>本页勾选状态保存在本机浏览器；与 MD 不一致时以 MD 为准</li>
+  </ul>
+</div>
+
+<footer class="foot">DrawPhysicsHub 开发计划 v1.0 · 2026-11-15 · 物理模型层 + 渲染层 · 参考意图、自研超越</footer>
+
+<script>
+(function(){
+var KEY='dph-devplan-progress-v1.0',state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+var boxes=[].slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+if(!Object.keys(state).length){boxes.forEach(function(cb){if(cb.checked&&cb.dataset.id)state[cb.dataset.id]=true});try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+var MS=['M1','M2','M3','M4','M5','M6','M7','M8','M9','BK'],P1=['M1','M2','M3','M4','M5','M6'],P2=['M7','M8','M9'];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function recalc(){
+var tP1=0,dP1=0,tP2=0,dP2=0,tBk=0,dBk=0;
+MS.forEach(function(m){
+var sec=document.querySelector('.ms[data-ms="'+m+'"]');if(!sec)return;
+var t=sec.querySelectorAll('input.ck-task'),b=sec.querySelectorAll('input.ck-back'),dt=0,db=0;
+t.forEach(function(c){if(c.checked)dt++});b.forEach(function(c){if(c.checked)db++});
+var tn=t.length,bn=b.length,sn=tn>0?tn:bn,ds=tn>0?dt:db;
+if(P1.indexOf(m)>=0){tP1+=tn;dP1+=dt}else if(P2.indexOf(m)>=0){tP2+=tn;dP2+=dt}else{tBk+=bn;dBk+=db}
+var cntEl=document.getElementById('cnt-'+m),barEl=document.getElementById('bar-'+m),ovEl=document.getElementById('ov-'+m);
+if(cntEl){cntEl.textContent=ds+' / '+sn;cntEl.className='count'+(ds===sn&&sn>0?' finit':'')}
+if(barEl)barEl.style.width=(sn?Math.round(ds/sn*100):0)+'%';
+if(ovEl)ovEl.textContent=ds+' / '+sn;
+var row=document.querySelector('tr[data-ov="'+m+'"]');if(row)row.className=(ds===sn&&sn>0)?'done-row':'';
+var nav=document.getElementById('nav-'+m);if(nav&&sn>0)nav.textContent=Math.round(ds/sn*100)+'%';
+});
+var total=tP1+tP2,done=dP1+dP2,pct=total?Math.round(done/total*100):0;
+document.getElementById('ovBar').style.width=pct+'%';
+document.getElementById('ovPct').textContent=pct+'%';
+document.getElementById('ovSub').textContent='一期 '+dP1+' / '+tP1+' · 二期 '+dP2+' / '+tP2+' · Backlog '+dBk+' / '+tBk+'　—— 进度自动保存在本浏览器';
+}
+boxes.forEach(function(cb){
+var li=cb.closest?cb.closest('.task'):cb.parentNode;
+if(state[cb.dataset.id]){cb.checked=true;if(li)li.classList.add('done')}
+cb.addEventListener('change',function(){
+if(cb.checked){state[cb.dataset.id]=true;if(li)li.classList.add('done')}else{delete state[cb.dataset.id];if(li)li.classList.remove('done')}
+save();recalc();
+});
+});
+document.getElementById('expBtn').onclick=function(){
+var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));
+a.download='dph-devplan-progress-v1.0.json';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('impFile').onchange=function(e){
+var f=e.target.files[0];if(!f)return;var r=new FileReader();
+r.onload=function(){try{var d=JSON.parse(r.result);if(d&&typeof d==='object'){state=d;save();boxes.forEach(function(cb){var li=cb.closest?cb.closest('.task'):cb.parentNode;cb.checked=!!state[cb.dataset.id];if(li)li.classList.toggle('done',cb.checked)});recalc()}}catch(err){alert('进度文件格式错误')}};
+r.readAsText(f);e.target.value='';
+};
+document.getElementById('resetBtn').onclick=function(){
+if(confirm('确定清空全部勾选进度？可先导出备份。')){state={};save();boxes.forEach(function(cb){var li=cb.closest?cb.closest('.task'):cb.parentNode;cb.checked=false;if(li)li.classList.remove('done')});recalc()}
+};
+recalc();
+var navLinks=document.querySelectorAll('#sidenav a.nav-link'),navTargets=[];
+navLinks.forEach(function(link){var href=link.getAttribute('href');if(href&&href[0]==='#'){var t=document.getElementById(href.slice(1));if(t)navTargets.push({link:link,el:t})}});
+function absTop(el){return el.getBoundingClientRect().top+window.scrollY}
+navTargets.sort(function(a,b){return absTop(a.el)-absTop(b.el)});
+function updateNav(){var y=window.scrollY+120,cur=null;for(var i=navTargets.length-1;i>=0;i--){if(y>=absTop(navTargets[i].el)){cur=navTargets[i];break}}navLinks.forEach(function(l){l.classList.remove('active')});if(cur)cur.link.classList.add('active');else if(navTargets[0])navTargets[0].link.classList.add('active')}
+window.addEventListener('scroll',updateNav,{passive:true});window.addEventListener('resize',updateNav,{passive:true});updateNav();
+navLinks.forEach(function(link){link.addEventListener('click',function(e){e.preventDefault();var t=document.getElementById(link.getAttribute('href').slice(1));if(t)window.scrollTo({top:absTop(t)-20,behavior:'smooth'})})});
+})();
+</script>
+
+</body>
+</html>
