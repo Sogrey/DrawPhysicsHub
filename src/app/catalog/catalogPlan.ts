@@ -76,14 +76,7 @@ export const PLANNED_SOON: PlannedEntry[] = [
     title: '动生电动势',
     tags: ['动生', '切割磁感线'],
   },
-  // —— 光学（M5-12 目录预告）——
-  {
-    id: 'opt-lens',
-    subject: '光学',
-    category: '几何光学',
-    title: '薄透镜成像',
-    tags: ['透镜', '成像'],
-  },
+  // —— 光学（薄透镜已落地；其余预告）——
   {
     id: 'opt-thin-film',
     subject: '光学',
@@ -166,4 +159,5 @@ export const LIVE_COVERS: Record<string, string> = {
   'opt-malus': '/covers/opt-malus.png',
   'opt-waveplate': '/covers/opt-waveplate.png',
   'opt-refraction': '/covers/opt-refraction.png',
+  'opt-lens': '/covers/opt-lens.png',
 }

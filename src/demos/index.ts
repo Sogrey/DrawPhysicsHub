@@ -23,6 +23,7 @@ import { registerDiffractionDemo } from './optics/diffraction'
 import { registerMalusDemo } from './optics/malus'
 import { registerWaveplateDemo } from './optics/waveplate'
 import { registerRefractionDemo } from './optics/refraction'
+import { registerLensDemo } from './optics/lens'
 
 /** Register all built-in demos */
 export function registerAllDemos(): void {
@@ -51,4 +52,5 @@ export function registerAllDemos(): void {
   registerMalusDemo()
   registerWaveplateDemo()
   registerRefractionDemo()
+  registerLensDemo()
 }
