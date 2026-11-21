@@ -17,10 +17,6 @@ export function createInclineModel(): PhysicsModel {
     return G * (Math.sin(th) - mu * Math.cos(th))
   }
 
-  function canSlide() {
-    return accel() > 1e-9
-  }
-
   function processEnd() {
     const a = accel()
     if (a <= 1e-9) return 1.5 // 静置示意时长

@@ -9,7 +9,6 @@ import {
   createDashedTrailLine,
   createParticleMesh,
   createTrailLine,
-  setTrailPositions,
 } from '@/core/render/particle3d'
 import {
   drawProjectileFrame,
