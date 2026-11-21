@@ -99,6 +99,96 @@ export function paintCoherentIntensityField(
   ctx.restore()
 }
 
+/**
+ * 顶栏「公式 ↔ 画面」对照条（M5-14）：符号式 + 代入数值 + 与探测点 I 一致提示。
+ * 使用屏幕坐标，避免被坐标轴裁切。
+ */
+export function drawIntensityFormulaHud(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    W: number
+    title: string
+    /** 主公式一行，如 I=cos²(…) = 0.85 */
+    formulaLine: string
+    /** 辅助行，如 δ=…  Δy=… */
+    detailLine: string
+    /** 相长 / 相消 / 暗纹 等 */
+    verdict: string
+    verdictTone?: 'bright' | 'dark' | 'mid'
+    match?: boolean
+  },
+): void {
+  const boxX = 12
+  const boxY = 8
+  const boxW = Math.min(620, opts.W - 24)
+  const boxH = 56
+  const tone =
+    opts.verdictTone === 'bright'
+      ? 'rgba(74, 222, 128, 0.95)'
+      : opts.verdictTone === 'dark'
+        ? 'rgba(248, 113, 113, 0.95)'
+        : 'rgba(251, 191, 36, 0.95)'
+
+  ctx.save()
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'
+  ctx.fillRect(boxX, boxY, boxW, boxH)
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)'
+  ctx.lineWidth = 1.2
+  ctx.strokeRect(boxX, boxY, boxW, boxH)
+
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.95)'
+  ctx.font = '11px "Segoe UI", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText(opts.title, boxX + 10, boxY + 14)
+
+  ctx.fillStyle = 'rgba(125, 211, 252, 0.98)'
+  ctx.font = 'bold 12px "Segoe UI", sans-serif'
+  ctx.fillText(opts.formulaLine, boxX + 10, boxY + 32)
+
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.9)'
+  ctx.font = '11px "Segoe UI", sans-serif'
+  ctx.fillText(opts.detailLine, boxX + 10, boxY + 48)
+
+  ctx.fillStyle = tone
+  ctx.font = 'bold 12px "Segoe UI", sans-serif'
+  ctx.textAlign = 'right'
+  const matchTag = opts.match === false ? ' · 不一致' : opts.match ? ' · 与黄点一致' : ''
+  ctx.fillText(opts.verdict + matchTag, boxX + boxW - 12, boxY + 32)
+  ctx.restore()
+}
+
+/** 在屏上标出亮纹级次 y=m·Δy（双缝）或暗纹 y=m·y₁（单缝） */
+export function drawFringeOrderMarks(
+  ctx: CanvasRenderingContext2D,
+  map: ScreenMapper,
+  opts: {
+    screenX: number
+    barW: number
+    orders: { y: number; label: string; kind: 'bright' | 'dark' }[]
+    yClip: number
+  },
+): void {
+  ctx.save()
+  for (const o of opts.orders) {
+    if (Math.abs(o.y) > opts.yClip) continue
+    const py = map.sy(o.y)
+    const x0 = map.sx(opts.screenX)
+    ctx.strokeStyle =
+      o.kind === 'bright' ? 'rgba(74, 222, 128, 0.75)' : 'rgba(251, 191, 36, 0.75)'
+    ctx.lineWidth = 1.2
+    ctx.setLineDash([3, 3])
+    ctx.beginPath()
+    ctx.moveTo(x0 - 6, py)
+    ctx.lineTo(x0 + opts.barW + 4, py)
+    ctx.stroke()
+    ctx.setLineDash([])
+    ctx.fillStyle = o.kind === 'bright' ? 'rgba(74, 222, 128, 0.95)' : 'rgba(251, 191, 36, 0.95)'
+    ctx.font = '10px "Segoe UI", sans-serif'
+    ctx.fillText(o.label, x0 + opts.barW + 6, py + 3)
+  }
+  ctx.restore()
+}
+
 /** Annotate path difference at probe: rays + δ / φ + 相长|相消 */
 export function drawPathDifferenceCallout(
   ctx: CanvasRenderingContext2D,

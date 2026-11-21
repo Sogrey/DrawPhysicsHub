@@ -206,12 +206,13 @@ export const doubleSlitMeta: DemoMeta = {
       '\\delta\\approx\\dfrac{d y}{L}',
     ],
     insight:
-      '播放时可见：两缝相干光场在空间形成明暗带（相长/相消），屏上截取即干涉条纹。探测点标注光程差 δ 与相位差 φ。',
+      '顶栏把 I=cos²(πdy/(λL)) 代入当前 y，数值应与黄点强度一致；屏旁 m=0,±1… 标亮纹，半整数标暗纹。拖动时间轴核对公式 ↔ 画面。',
     legend: [
       { color: '#38bdf8', label: '空间干涉光场 / 波面' },
       { color: '#f87171', label: '双缝 A₁ A₂' },
       { color: '#60a5fa', label: '屏条纹 / I(y)' },
-      { color: '#fbbf24', label: '探测点（δ、相长/相消）' },
+      { color: '#fbbf24', label: '探测点（公式对照）' },
+      { color: '#4ade80', label: '亮纹级次 m' },
     ],
     steps: [
       {

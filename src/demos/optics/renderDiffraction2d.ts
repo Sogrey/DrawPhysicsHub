@@ -10,7 +10,9 @@ import {
 } from '@/core/render/primitives2d'
 import {
   drawCircularWavefronts,
+  drawFringeOrderMarks,
   drawIntensityCurvePanel,
+  drawIntensityFormulaHud,
   drawPathDifferenceCallout,
   drawPlaneWaveArrows,
   paintCoherentIntensityField,
@@ -161,18 +163,22 @@ export function drawDiffractionFrame(
     })
   }
 
-  // first minima
-  ctx.strokeStyle = 'rgba(251, 191, 36, 0.75)'
-  ctx.setLineDash([5, 4])
-  ctx.lineWidth = 1.4
-  for (const ym of [y1, -y1]) {
-    if (Math.abs(ym) > yMax) continue
-    ctx.beginPath()
-    ctx.moveTo(sx(screenX - 0.15), sy(ym))
-    ctx.lineTo(sx(screenX) + fringeW + 8, sy(ym))
-    ctx.stroke()
+  // 暗纹级次 y_m = m · y₁
+  const darkOrders: { y: number; label: string; kind: 'bright' | 'dark' }[] = [
+    { y: 0, label: '中央', kind: 'bright' },
+  ]
+  const mMax = Math.floor(yMax / Math.max(y1, 1e-6))
+  for (let m = 1; m <= mMax; m++) {
+    darkOrders.push({ y: m * y1, label: `m=${m}`, kind: 'dark' })
+    darkOrders.push({ y: -m * y1, label: `m=${-m}`, kind: 'dark' })
   }
-  ctx.setLineDash([])
+  drawFringeOrderMarks(ctx, map, {
+    screenX,
+    barW: fringeW,
+    orders: darkOrders,
+    yClip: yMax * 0.98,
+  })
+
   if (y1 < yMax) {
     drawDimLine(ctx, sx(screenX + 0.55), sy(0), sx(screenX + 0.55), sy(y1), `y₁=${y1.toFixed(2)}`, {
       offset: 12,
@@ -182,11 +188,20 @@ export function drawDiffractionFrame(
   // probe: edge vs center of slit → path difference across aperture
   const yProbe = Number(snap.values.y ?? 0)
   const I = Number(snap.values.I ?? 0)
+  const beta = Number(snap.values.beta ?? (Math.PI * a * yProbe) / (lambda * L))
   const edgeSources = [sources[0]!, sources[sources.length - 1]!]
   const r1 = Math.hypot(screenX - edgeSources[0].x, yProbe - edgeSources[0].y)
   const r2 = Math.hypot(screenX - edgeSources[1].x, yProbe - edgeSources[1].y)
   const deltaEdge = r1 - r2
   const phiDeg = ((deltaEdge / lambda) * 360) % 360
+
+  // sinc² 公式代入，与模型一致
+  const betaLive = (Math.PI * a * yProbe) / (lambda * L)
+  const Iformula =
+    Math.abs(betaLive) < 1e-8 ? 1 : (Math.sin(betaLive) / betaLive) ** 2
+  const match = Math.abs(Iformula - I) < 0.02
+  const atDark = Math.abs(I) < 0.08
+  const atCenter = Math.abs(yProbe) < y1 * 0.25 && I > 0.7
 
   ctx.fillStyle = '#fbbf24'
   ctx.beginPath()
@@ -201,18 +216,13 @@ export function drawDiffractionFrame(
     I,
   })
 
-  drawDiagramLabel(
-    ctx,
-    '原理：缝内各次波相干叠加；边缘光程差≈λ 时相消 → 第一暗纹 y₁=λL/a；中央宽≈2y₁',
-    sx(world.xMin) + 8,
-    sy(world.yMax) - 8,
-    { color: 'rgba(226, 232, 240, 0.88)', font: '11px "Segoe UI", sans-serif' },
-  )
-  drawDiagramLabel(
-    ctx,
-    `λ=${lambda.toFixed(2)}  L=${L.toFixed(1)}  中央宽=${Number(snap.values.centralWidth ?? 0).toFixed(2)}  播放看波场形成`,
-    sx(world.xMin) + 8,
-    sy(world.yMax) - 26,
-    { color: 'rgba(148, 163, 184, 0.9)', font: '11px "Segoe UI", sans-serif' },
-  )
+  drawIntensityFormulaHud(ctx, {
+    W,
+    title: '公式 ↔ 画面对照（黄点 = 探测点）',
+    formulaLine: `I = sinc²(β)  β=π a y/(λ L)=${betaLive.toFixed(2)}  →  I=${Iformula.toFixed(3)}`,
+    detailLine: `y₁=λL/a=${y1.toFixed(2)}  中央宽=2y₁=${(2 * y1).toFixed(2)}  y=${yProbe.toFixed(2)}  β=${Number(beta).toFixed(2)}`,
+    verdict: atCenter ? '中央主极大' : atDark ? '暗纹（极小）' : '次级峰 / 过渡',
+    verdictTone: atCenter ? 'bright' : atDark ? 'dark' : 'mid',
+    match,
+  })
 }

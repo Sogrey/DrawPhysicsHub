@@ -10,7 +10,9 @@ import {
 } from '@/core/render/primitives2d'
 import {
   drawCircularWavefronts,
+  drawFringeOrderMarks,
   drawIntensityCurvePanel,
+  drawIntensityFormulaHud,
   drawPathDifferenceCallout,
   paintCoherentIntensityField,
 } from './wavefronts2d'
@@ -205,11 +207,36 @@ export function drawDoubleSlitFrame(
     })
   }
 
+  // 亮纹级次标记 y = m Δy
+  const fringeOrders: { y: number; label: string; kind: 'bright' | 'dark' }[] = []
+  const mMax = Math.floor(yMax / Math.max(dy, 1e-6))
+  for (let m = -mMax; m <= mMax; m++) {
+    fringeOrders.push({ y: m * dy, label: m === 0 ? 'm=0' : `m=${m}`, kind: 'bright' })
+    if (m >= 0) {
+      const yd = (m + 0.5) * dy
+      if (yd < yMax) fringeOrders.push({ y: yd, label: `暗`, kind: 'dark' })
+      if (m > 0 && -yd > -yMax) fringeOrders.push({ y: -yd, label: `暗`, kind: 'dark' })
+    }
+  }
+  drawFringeOrderMarks(ctx, map, {
+    screenX,
+    barW,
+    orders: fringeOrders,
+    yClip: yMax * 0.98,
+  })
+
   // ③ 探测点光程差 → 相长/相消原理
   const yProbe = Number(snap.values.y ?? 0)
   const I = Number(snap.values.I ?? 0)
   const delta = Number(snap.values.delta ?? 0)
   const phiDeg = Number(snap.values.phiDeg ?? 0)
+  // 公式代入：与模型 intensityAt 同一式
+  const arg = (Math.PI * d * yProbe) / (lambda * L)
+  const Iformula = Math.cos(arg) ** 2
+  const match = Math.abs(Iformula - I) < 0.02
+  const constructive = I > 0.55
+  const destructive = I < 0.2
+
   ctx.fillStyle = '#fbbf24'
   ctx.beginPath()
   ctx.arc(sx(screenX) + barW * 0.5, sy(yProbe), 6, 0, Math.PI * 2)
@@ -223,19 +250,13 @@ export function drawDoubleSlitFrame(
     I,
   })
 
-  // principle caption
-  drawDiagramLabel(
-    ctx,
-    '原理：A₁、A₂ 相干叠加 → 空间亮带=相长(δ=mλ) · 暗带=相消(δ=(m+½)λ) · 屏上截得条纹',
-    sx(world.xMin) + 8,
-    sy(world.yMax) - 8,
-    { color: 'rgba(226, 232, 240, 0.88)', font: '11px "Segoe UI", sans-serif' },
-  )
-  drawDiagramLabel(
-    ctx,
-    `λ=${lambda.toFixed(2)}  L=${L.toFixed(1)}  播放可见波面推进与光场闪动`,
-    sx(world.xMin) + 8,
-    sy(world.yMax) - 26,
-    { color: 'rgba(148, 163, 184, 0.9)', font: '11px "Segoe UI", sans-serif' },
-  )
+  drawIntensityFormulaHud(ctx, {
+    W,
+    title: '公式 ↔ 画面对照（黄点 = 探测点）',
+    formulaLine: `I = cos²(π d y /(λ L)) = cos²(${arg.toFixed(2)}) = ${Iformula.toFixed(3)}`,
+    detailLine: `δ = d·y/L = ${delta.toFixed(3)}   Δy = λL/d = ${dy.toFixed(2)}   y = ${yProbe.toFixed(2)}`,
+    verdict: constructive ? '相长（亮）' : destructive ? '相消（暗）' : '部分干涉',
+    verdictTone: constructive ? 'bright' : destructive ? 'dark' : 'mid',
+    match,
+  })
 }

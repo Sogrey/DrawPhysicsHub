@@ -209,12 +209,13 @@ export const diffractionMeta: DemoMeta = {
       '\\text{中央全宽}\\approx 2\\dfrac{\\lambda L}{a}',
     ],
     insight:
-      '缝内红点=惠更斯次波源；它们相干叠加后在空间形成衍射光场，屏上截得中央宽、两侧暗纹。边缘光程差≈λ 对应第一暗纹。',
+      '顶栏把 I=sinc²(β)、β=πay/(λL) 代入当前 y，应与黄点强度一致；屏旁 m=±1,±2… 标暗纹。拖时间轴核对公式 ↔ 画面。',
     legend: [
       { color: '#4ade80', label: '入射波 / 空间衍射场' },
       { color: '#f87171', label: '惠更斯次波源' },
       { color: '#22c55e', label: '条纹 / I(y)∝sinc²' },
-      { color: '#fbbf24', label: '探测点（δ / 相消）' },
+      { color: '#fbbf24', label: '探测点（公式对照）' },
+      { color: '#fbbf24', label: '暗纹级次 m' },
     ],
     steps: [
       {
