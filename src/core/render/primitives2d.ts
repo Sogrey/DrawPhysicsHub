@@ -112,10 +112,26 @@ export function drawProjectionGuides(
   ctx.restore()
 }
 
-export function createWorldMapper(world: WorldBounds, W: number, H: number) {
-  const sx = (x: number) => ((x - world.xMin) / (world.xMax - world.xMin)) * W
-  const sy = (y: number) => H - ((y - world.yMin) / (world.yMax - world.yMin)) * H
-  return { sx, sy }
+export function createWorldMapper(
+  world: WorldBounds,
+  W: number,
+  H: number,
+  opts?: { isotropic?: boolean },
+) {
+  if (!opts?.isotropic) {
+    const sx = (x: number) => ((x - world.xMin) / (world.xMax - world.xMin)) * W
+    const sy = (y: number) => H - ((y - world.yMin) / (world.yMax - world.yMin)) * H
+    return { sx, sy, scale: NaN }
+  }
+  // 等比例：保证世界圆在屏幕上仍是正圆（居中 letterbox）
+  const worldW = world.xMax - world.xMin
+  const worldH = world.yMax - world.yMin
+  const scale = Math.min(W / worldW, H / worldH)
+  const cx = (world.xMin + world.xMax) / 2
+  const cy = (world.yMin + world.yMax) / 2
+  const sx = (x: number) => W / 2 + (x - cx) * scale
+  const sy = (y: number) => H / 2 - (y - cy) * scale
+  return { sx, sy, scale }
 }
 
 export function drawArrow(
@@ -150,14 +166,15 @@ export function drawArrow(
   ctx.fill()
 }
 
-/** 浅网格 + x/y 轴箭头 */
+/** 浅网格 + x/y 轴箭头；isotropic 时 x/y 等比例（正圆不变形） */
 export function drawGridAndAxes2D(
   ctx: CanvasRenderingContext2D,
   world: WorldBounds,
   W: number,
   H: number,
+  opts?: { isotropic?: boolean },
 ) {
-  const { sx, sy } = createWorldMapper(world, W, H)
+  const { sx, sy } = createWorldMapper(world, W, H, opts)
 
   ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)'
   ctx.lineWidth = 1
@@ -165,14 +182,14 @@ export function drawGridAndAxes2D(
   const gy = Math.max(1, Math.round((world.yMax - world.yMin) / 8))
   for (let x = Math.ceil(world.xMin / gx) * gx; x <= world.xMax; x += gx) {
     ctx.beginPath()
-    ctx.moveTo(sx(x), 0)
-    ctx.lineTo(sx(x), H)
+    ctx.moveTo(sx(x), sy(world.yMin))
+    ctx.lineTo(sx(x), sy(world.yMax))
     ctx.stroke()
   }
   for (let y = Math.ceil(world.yMin / gy) * gy; y <= world.yMax; y += gy) {
     ctx.beginPath()
-    ctx.moveTo(0, sy(y))
-    ctx.lineTo(W, sy(y))
+    ctx.moveTo(sx(world.xMin), sy(y))
+    ctx.lineTo(sx(world.xMax), sy(y))
     ctx.stroke()
   }
 
