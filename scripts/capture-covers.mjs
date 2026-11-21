@@ -41,6 +41,7 @@ const ALL_DEMOS = [
   { id: 'opt-malus', subject: '光学' },
   { id: 'opt-waveplate', subject: '光学' },
   { id: 'opt-refraction', subject: '光学' },
+  { id: 'opt-lens', subject: '光学' },
 ]
 
 const onlyMissing = process.env.DPH_COVERS_ALL !== '1'
