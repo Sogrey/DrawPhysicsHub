@@ -84,7 +84,6 @@ export function drawLensFrame(
 
   const f = Number(snap.values.f ?? 2)
   const u = Number(snap.values.u ?? 4)
-  const vRaw = Number(snap.values.v ?? 0)
   const finite = Number(snap.values.finite ?? 1) > 0.5
   const real = Number(snap.values.real ?? 1) > 0.5
   const hObj = Number(snap.values.hObj ?? 1.2)
