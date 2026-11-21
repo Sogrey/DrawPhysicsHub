@@ -2,6 +2,7 @@ import type { CompareTrail } from '@/core/physics/adapter'
 import type { ObserveSnapshot } from '@/core/physics/types'
 import { traceChargeFieldLines } from '@/core/physics/fieldLines'
 import type { Canvas2DHost } from '@/core/render/canvas2d'
+import { adaptiveFieldDensity } from '@/core/render/adaptiveFieldDensity'
 import { drawArrowedFieldLines } from '@/core/render/fieldLines2d'
 import {
   drawArrow,
@@ -55,18 +56,20 @@ export function drawPointChargeFrame(
     { x: q1x, y: 0, Q: Q1 },
     { x: q2x, y: 0, Q: Q2 },
   ]
+  const nSources = (Math.abs(Q1) > 0.05 ? 1 : 0) + (Math.abs(Q2) > 0.05 ? 1 : 0)
+  const dens = adaptiveFieldDensity({ world, pixelW: W, pixelH: H, nSources: Math.max(1, nSources) })
   const lines = traceChargeFieldLines(charges, world, {
     k: K,
-    linesPerCharge: 14,
+    linesPerCharge: dens.linesPerCharge,
     seedR: 0.3,
-    step: 0.05,
+    step: dens.step,
     sinkR: 0.26,
   })
   drawArrowedFieldLines(ctx, lines, map, {
     strokeStyle: 'rgba(186, 170, 255, 0.82)',
-    lineWidth: 1.4,
-    arrowEvery: 0.9,
-    arrowLen: 0.26,
+    lineWidth: dens.lineWidth,
+    arrowEvery: dens.arrowEvery,
+    arrowLen: dens.arrowLen,
   })
 
   if (opts?.compare?.path?.length) {

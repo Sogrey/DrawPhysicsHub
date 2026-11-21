@@ -1,6 +1,7 @@
 import type { CompareTrail } from '@/core/physics/adapter'
 import type { ObserveSnapshot } from '@/core/physics/types'
 import type { Canvas2DHost } from '@/core/render/canvas2d'
+import { adaptiveFieldDensity } from '@/core/render/adaptiveFieldDensity'
 import { drawArrowedFieldLines } from '@/core/render/fieldLines2d'
 import {
   drawArrow,
@@ -85,14 +86,15 @@ export function drawWireBFrame(
   const I = Number(snap.values.I ?? 2)
   const R = Number(snap.values.R ?? 2)
   const sense: 1 | -1 = I >= 0 ? 1 : -1
-  const radii = [0.7, 1.25, 1.85, 2.5, 3.2, 3.9].filter((r) => r < world.xMax - 0.15)
+  const dens = adaptiveFieldDensity({ world, pixelW: W, pixelH: H, nSources: 1 })
+  const radii = dens.wireRadii.filter((r) => r < world.xMax - 0.15)
 
   const paths = radii.map((r) => circlePath(r, sense))
   drawArrowedFieldLines(ctx, paths, map, {
     strokeStyle: 'rgba(52, 211, 153, 0.82)',
-    lineWidth: 1.45,
-    arrowEvery: 1.15,
-    arrowLen: 0.28,
+    lineWidth: dens.lineWidth,
+    arrowEvery: dens.arrowEvery * 1.15,
+    arrowLen: dens.arrowLen,
   })
 
   if (opts?.compare?.path?.length) {

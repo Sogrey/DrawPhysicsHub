@@ -2,6 +2,7 @@ import type { CompareTrail } from '@/core/physics/adapter'
 import type { ObserveSnapshot } from '@/core/physics/types'
 import { traceChargeFieldLines } from '@/core/physics/fieldLines'
 import type { Canvas2DHost } from '@/core/render/canvas2d'
+import { adaptiveFieldDensity } from '@/core/render/adaptiveFieldDensity'
 import { drawArrowedFieldLines } from '@/core/render/fieldLines2d'
 import {
   drawArrow,
@@ -49,18 +50,19 @@ export function drawDipoleFrame(
     { x: qMinusX, y: 0, Q: -Q },
     { x: qPlusX, y: 0, Q: +Q },
   ]
+  const dens = adaptiveFieldDensity({ world, pixelW: W, pixelH: H, nSources: 2 })
   const lines = traceChargeFieldLines(charges, world, {
     k: K,
-    linesPerCharge: 16,
+    linesPerCharge: dens.linesPerCharge,
     seedR: 0.28,
-    step: 0.048,
+    step: dens.step,
     sinkR: 0.24,
   })
   drawArrowedFieldLines(ctx, lines, map, {
     strokeStyle: 'rgba(186, 170, 255, 0.85)',
-    lineWidth: 1.4,
-    arrowEvery: 0.85,
-    arrowLen: 0.25,
+    lineWidth: dens.lineWidth,
+    arrowEvery: dens.arrowEvery,
+    arrowLen: dens.arrowLen,
   })
 
   if (opts?.compare?.path?.length) {
