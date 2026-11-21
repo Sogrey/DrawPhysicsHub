@@ -14,16 +14,25 @@ import { registerEnergyCurveDemo } from './mechanics/energyCurve'
 import { registerStandingWaveDemo } from './mechanics/standingWave'
 import { registerWaveTransverseDemo } from './mechanics/waveTransverse'
 import { registerPointChargeDemo } from './em/pointCharge'
+import { registerPotentialDemo } from './em/potential'
 import { registerDipoleDemo } from './em/dipole'
 import { registerWireBDemo } from './em/wireB'
+import { registerLoopBDemo } from './em/loopB'
 import { registerCyclotronDemo } from './em/cyclotron'
+import { registerAmpereDemo } from './em/ampere'
 import { registerLenzDemo } from './em/lenz'
+import { registerMotionalEmfDemo } from './em/motionalEmf'
+import { registerGasDemo } from './thermo/gas'
+import { registerCarnotDemo } from './thermo/carnot'
 import { registerDoubleSlitDemo } from './optics/doubleSlit'
 import { registerDiffractionDemo } from './optics/diffraction'
 import { registerMalusDemo } from './optics/malus'
 import { registerWaveplateDemo } from './optics/waveplate'
 import { registerRefractionDemo } from './optics/refraction'
 import { registerLensDemo } from './optics/lens'
+import { registerThinFilmDemo } from './optics/thinFilm'
+import { registerGratingDemo } from './optics/grating'
+import { registerBirefringenceDemo } from './optics/birefringence'
 
 /** Register all built-in demos */
 export function registerAllDemos(): void {
@@ -43,14 +52,23 @@ export function registerAllDemos(): void {
   registerEnergyCurveDemo()
   registerAngularMomentumDemo()
   registerPointChargeDemo()
+  registerPotentialDemo()
   registerDipoleDemo()
   registerWireBDemo()
+  registerLoopBDemo()
   registerCyclotronDemo()
+  registerAmpereDemo()
   registerLenzDemo()
+  registerMotionalEmfDemo()
+  registerGasDemo()
+  registerCarnotDemo()
   registerDoubleSlitDemo()
   registerDiffractionDemo()
   registerMalusDemo()
   registerWaveplateDemo()
   registerRefractionDemo()
   registerLensDemo()
+  registerThinFilmDemo()
+  registerGratingDemo()
+  registerBirefringenceDemo()
 }
