@@ -51,6 +51,9 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 
 ## 新增一个演示
 
+力学包细则见 [力学内容规范.md](./力学内容规范.md)；抽检见 [力学包抽检报告.md](./力学包抽检报告.md)。  
+电磁 / 光学见 [电磁内容规范.md](./电磁内容规范.md)、[光学内容规范.md](./光学内容规范.md)、[电磁光学抽检报告.md](./电磁光学抽检报告.md)。目录分类序：`catalogPlan.CATEGORY_ORDER`。
+
 1. 在 `demos/<subject>/` 实现 `createXxxModel()` + `DemoMeta`（填齐 `concept` / `steps` / `challenges` / `readouts`；输出 `tMax` 与所需衍生量）
 2. 实现 `createXxxAdapter()`（`paint2d` / `setup3d` / `buildCompare` 等）
 3. 专用画面放同目录 `render*.ts`
@@ -65,6 +68,7 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 |----|----------|------|
 | `mech-projectile` | `projectile.ts` | 教学样板：分解 / 对比 / scrub |
 | `mech-circular` | `circular.ts` | 匀速圆周、向心加速度 |
+| `mech-natural-frame` | `naturalFrame.ts` | 自然坐标系：椭圆轨道 aₜ / aₙ |
 | `mech-incline` | `incline.ts` | 斜面滑块、摩擦、能量 |
 | `mech-harmonic` | `harmonic.ts` | 简谐；Adapter 验收样板 |
 | `mech-damped` | `damped.ts` | 欠阻尼包络 |
@@ -72,6 +76,11 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 | `mech-pendulum` | `pendulum.ts` | 单摆小角 / 大摆角 |
 | `mech-collision-1d` | `collision.ts` | 一维碰撞 |
 | `mech-rolling` | `rolling.ts` | 无滑滚动、\(v=\omega R\)、动能分配 |
+| `mech-rotation-axis` | `rotationAxis.ts` | 定轴转动：ω/α、τ=Iα、轮缘线速度 |
+| `mech-wave-transverse` | `waveTransverse.ts` | 行进横波：λ、T、相速 v=λ/T |
+| `mech-standing-wave` | `standingWave.ts` | 驻波：波节/波腹、包络 \(2A|\cos kx|\) |
+| `mech-energy-curve` | `energyCurve.ts` | 势能曲线 U(x) 与 E、K 联动 |
+| `mech-angular-momentum` | `angularMomentum.ts` | 对点角动量：直线掠过，L=mvb |
 
 2D 图注约定：优先用 `primitives2d` 的 `drawAngleMark` / `drawDimLine` / `drawDiagramLabel`，避免与轴线/轨迹压线。
 
