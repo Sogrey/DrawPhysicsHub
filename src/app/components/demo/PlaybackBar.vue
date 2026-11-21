@@ -2,6 +2,7 @@
 defineProps<{
   playing: boolean
   speed: number
+  loop?: boolean
   canScrub?: boolean
   t?: number
   tMax?: number
@@ -14,6 +15,7 @@ const emit = defineEmits<{
   pause: []
   reset: []
   'update:speed': [number]
+  'update:loop': [boolean]
   scrub: [Event]
   keepCompare: []
   clearCompare: []
@@ -31,17 +33,27 @@ const emit = defineEmits<{
         {{ playing ? '暂停' : '播放' }}
       </button>
       <button type="button" @click="emit('reset')">复位</button>
-      <label class="speed">
-        倍率
-        <select
-          :value="speed"
-          @change="emit('update:speed', Number(($event.target as HTMLSelectElement).value))"
-        >
-          <option :value="0.5">0.5×</option>
-          <option :value="1">1×</option>
-          <option :value="2">2×</option>
-        </select>
-      </label>
+      <div class="playback-opts">
+        <label class="speed">
+          倍率
+          <select
+            :value="speed"
+            @change="emit('update:speed', Number(($event.target as HTMLSelectElement).value))"
+          >
+            <option :value="0.5">0.5×</option>
+            <option :value="1">1×</option>
+            <option :value="2">2×</option>
+          </select>
+        </label>
+        <label class="loop-toggle" title="到达周期末尾后自动复位并继续播放">
+          <input
+            type="checkbox"
+            :checked="loop"
+            @change="emit('update:loop', ($event.target as HTMLInputElement).checked)"
+          />
+          循环
+        </label>
+      </div>
     </div>
 
     <label v-if="canScrub && tMax != null && t != null" class="scrub">

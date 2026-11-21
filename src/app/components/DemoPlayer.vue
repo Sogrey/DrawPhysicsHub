@@ -107,8 +107,11 @@ const playback = useSimPlayback({
     modelApi.reset()
     invalidateCharts()
   },
+  loopRestart: () => {
+    modelApi.reset()
+  },
 })
-const { playing, speed, scrubbing, play, pause, stopLoop } = playback
+const { playing, speed, scrubbing, loop, play, pause, stopLoop } = playback
 
 let fpsRaf = 0
 function fpsIdleLoop() {
@@ -214,6 +217,10 @@ function setSpeed(v: number) {
   speed.value = v
 }
 
+function setLoop(v: boolean) {
+  loop.value = v
+}
+
 function setupActiveView(id: string) {
   const kind = viewById.value.get(id)?.kind
   if (kind === 'canvas2d') setupCanvas2d()
@@ -314,6 +321,7 @@ onUnmounted(() => {
         <PlaybackBar
           :playing="playing"
           :speed="speed"
+          :loop="loop"
           :can-scrub="canScrub"
           :t="live.t ?? 0"
           :t-max="tMax"
@@ -323,6 +331,7 @@ onUnmounted(() => {
           @pause="pause"
           @reset="reset"
           @update:speed="setSpeed"
+          @update:loop="setLoop"
           @scrub="onScrub"
           @keep-compare="keepCompare"
           @clear-compare="clearCompare"
