@@ -47,11 +47,12 @@ export function createMalusAdapter(): DemoAdapter {
     },
 
     setup3d(host: ThreeHost) {
+      // 默认＝光路侧视，便于看起偏→检偏；可用 HUD 预设切换
       host.setViewDefaults({
         lookAt: [2.5, 0, 0],
-        yaw: 0.35,
-        pitch: 0.45,
-        distance: 12,
+        yaw: 0.15,
+        pitch: 0.22,
+        distance: 11,
         distanceMin: 5,
         distanceMax: 28,
       })

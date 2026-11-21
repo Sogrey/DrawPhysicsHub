@@ -58,6 +58,7 @@ const {
   resize: resizeThree,
   toggleAutoRotate,
   resetView: resetThreeView,
+  applyPreset: applyThreePreset,
   dispose: disposeThree,
   getHost: getThreeHost,
 } = useThreeView()
@@ -391,8 +392,15 @@ onUnmounted(() => {
         <canvas ref="threeEl"></canvas>
         <ThreeViewHud
           :auto-rotate="autoRotate"
+          :presets="meta.features?.cameraPresets"
+          :hint="
+            meta.features?.cameraPresets?.length
+              ? '偏振取景：点预设 · 拖拽旋转 · 右键平移 · 滚轮缩放'
+              : undefined
+          "
           @reset-view="resetThreeView"
           @toggle-auto-rotate="toggleAutoRotate"
+          @apply-preset="applyThreePreset"
         />
       </div>
 

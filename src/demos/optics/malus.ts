@@ -87,6 +87,32 @@ export const malusMeta: DemoMeta = {
     compare: false,
     scrub: true,
     charts: true,
+    cameraPresets: [
+      {
+        id: 'beam',
+        label: '光路侧视',
+        lookAt: [2.5, 0, 0],
+        yaw: 0.15,
+        pitch: 0.22,
+        distance: 11,
+      },
+      {
+        id: 'face',
+        label: '迎面看轴',
+        lookAt: [2.5, 0, 0],
+        yaw: 1.45,
+        pitch: 0.08,
+        distance: 10,
+      },
+      {
+        id: 'orbit',
+        label: '斜俯视',
+        lookAt: [2.5, 0, 0],
+        yaw: 0.55,
+        pitch: 0.55,
+        distance: 13,
+      },
+    ],
   },
   params: [
     {

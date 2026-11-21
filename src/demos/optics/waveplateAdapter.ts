@@ -36,12 +36,13 @@ export function createWaveplateAdapter(): DemoAdapter {
     },
 
     setup3d(host: ThreeHost) {
+      // 默认侧视光路；「迎面看椭圆」预设对准出射端矢端轨迹
       host.setViewDefaults({
         lookAt: [2.2, 0, 0],
-        yaw: 0.4,
-        pitch: 0.4,
-        distance: 11,
-        distanceMin: 5,
+        yaw: 0.12,
+        pitch: 0.2,
+        distance: 10,
+        distanceMin: 4,
         distanceMax: 26,
       })
 

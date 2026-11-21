@@ -75,6 +75,16 @@ export interface DemoView {
   charts?: DemoChartPanel[]
 }
 
+/** 3D 相机预设（偏振等演示引导取景） */
+export interface CameraViewPreset {
+  id: string
+  label: string
+  lookAt?: [number, number, number]
+  yaw?: number
+  pitch?: number
+  distance?: number
+}
+
 /** 控制台能力开关；缺省均视为关闭，demo 显式打开 */
 export interface DemoFeatures {
   compare?: boolean
@@ -83,6 +93,8 @@ export interface DemoFeatures {
   charts?: boolean
   /** 无对比时从图例隐藏的项 id（缺省 'compare'） */
   compareLegendId?: string
+  /** 3D 视口相机引导预设（M5-15） */
+  cameraPresets?: CameraViewPreset[]
 }
 
 /** 时间轴 / 曲线全长键约定 */

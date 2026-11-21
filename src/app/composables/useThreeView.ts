@@ -1,5 +1,6 @@
 import { ref, type Ref } from 'vue'
-import { createThreeHost, type ThreeHost } from '@/core/render/threeHost'
+import type { CameraViewPreset } from '@/core/physics/types'
+import { createThreeHost, type ThreeHost, type ThreeViewDefaults } from '@/core/render/threeHost'
 
 /** Three host + 自动旋转状态 */
 export function useThreeView() {
@@ -28,6 +29,16 @@ export function useThreeView() {
     host?.resetView()
   }
 
+  function applyPreset(preset: CameraViewPreset) {
+    const opts: ThreeViewDefaults = {
+      lookAt: preset.lookAt,
+      yaw: preset.yaw,
+      pitch: preset.pitch,
+      distance: preset.distance,
+    }
+    host?.applyView(opts)
+  }
+
   function dispose() {
     host?.dispose()
     host = null
@@ -44,6 +55,7 @@ export function useThreeView() {
     resize,
     toggleAutoRotate,
     resetView,
+    applyPreset,
     dispose,
     getHost,
   }

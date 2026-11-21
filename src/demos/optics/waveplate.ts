@@ -193,6 +193,32 @@ export const waveplateMeta: DemoMeta = {
     compare: false,
     scrub: true,
     charts: true,
+    cameraPresets: [
+      {
+        id: 'beam',
+        label: '光路侧视',
+        lookAt: [2.2, 0, 0],
+        yaw: 0.12,
+        pitch: 0.2,
+        distance: 10,
+      },
+      {
+        id: 'ellipse',
+        label: '迎面看椭圆',
+        lookAt: [3.6, 0, 0],
+        yaw: 1.55,
+        pitch: 0.05,
+        distance: 8,
+      },
+      {
+        id: 'orbit',
+        label: '斜俯视',
+        lookAt: [2.2, 0, 0],
+        yaw: 0.5,
+        pitch: 0.5,
+        distance: 12,
+      },
+    ],
   },
   params: [
     {
@@ -278,16 +304,16 @@ export const waveplateMeta: DemoMeta = {
   docs: {
     title: '波片与偏振态（线 / 圆 / 椭圆）',
     summary:
-      '线偏光经波片后，快慢轴分量产生相对位相延迟 δ。播放一个光周期，矢端轨迹画出线、圆或椭圆偏振。',
+      '三步看懂：①入射线偏光 → ②在波片上分解到快/慢轴并延迟 δ → ③Ex、Ey 合成矢端轨迹（线/圆/椭圆）。播放一个光周期即可看见形成过程。',
     concept: [
-      '波片不吸收振幅，只在快/慢轴间引入延迟 δ。',
-      '1/4 波片 + 45° 入射线偏光 → 圆偏振；偏离 45° → 椭圆。',
-      '1/2 波片保持线偏振，但把偏振面转到 α′=2β−α。',
+      '① 入射：线偏光只沿一个方向振动（双箭头）。',
+      '② 波片：把振动分解到快轴、慢轴；慢轴多走位相 δ（1/4 片=90°，1/2 片=180°）。',
+      '③ 合成：看 Ex(t)–Ey(t) 矢端扫出的图形——同相→线，等幅+90°→圆，其余→椭圆。',
     ],
     objectives: [
-      '对照矢端轨迹判断线 / 圆 / 椭圆',
-      '调 α、β 看 λ/4 何时成圆',
-      '用 λ/2 验证偏振面旋转 2β−α',
+      '对照三步画面理解「延迟如何改变偏振态」',
+      '默认 1/4 波片 + α=45° 应看到圆；改 α 变成椭圆',
+      '换成 1/2 波片验证偏振面旋转 α′=2β−α',
     ],
     formulas: [
       'J_{\\mathrm{in}}=(\\cos\\alpha,\\sin\\alpha)',
@@ -296,26 +322,26 @@ export const waveplateMeta: DemoMeta = {
       '\\alpha\'=2\\beta-\\alpha\\quad(\\lambda/2)',
     ],
     insight:
-      '左侧入射线偏光双箭头 → 中间波片（快/慢轴）→ 右侧矢端扫出偏振轨迹；播放即「形成过程」。',
+      '看画面编号：①入射双箭头 → ②波片上金=快、粉=慢（慢轴多延迟 δ）→ ③右侧 Ex/Ey 合成，紫箭头是瞬时 E，蓝线是一个周期扫出的轨迹。',
     legend: [
-      { color: '#4ade80', label: '入射线偏光' },
-      { color: '#fbbf24', label: '快轴' },
-      { color: '#f472b6', label: '慢轴' },
-      { color: '#38bdf8', label: '出射矢端轨迹' },
-      { color: '#a78bfa', label: '瞬时 E' },
+      { color: '#4ade80', label: '① 入射线偏光' },
+      { color: '#fbbf24', label: '② 快轴分量' },
+      { color: '#f472b6', label: '② 慢轴分量' },
+      { color: '#38bdf8', label: '③ 矢端轨迹' },
+      { color: '#a78bfa', label: '③ 瞬时 E' },
     ],
     steps: [
       {
         id: 'input',
-        title: '入射',
-        body: '线偏光方位角 α；振幅分量沿 x、y 分别为 cosα、sinα。',
+        title: '① 入射',
+        body: '线偏光只沿 α 方向振动。相对快轴的分量：Af=cos(α−β)，As=sin(α−β)。',
         formulas: ['J_{\\mathrm{in}}=(\\cos\\alpha,\\sin\\alpha)'],
         bindings: [{ labelTex: '\\alpha', valueKey: 'alpha', unit: '°' }],
       },
       {
         id: 'retard',
-        title: '延迟',
-        body: '快轴方位 β；慢轴相对快轴相位延迟 δ。',
+        title: '② 延迟',
+        body: '波片不改变振幅大小，只让慢轴分量相位多走 δ。播放时可见快/慢箭头不同步。',
         formulas: ['M=R(-\\beta)\\,\\mathrm{diag}(1,e^{i\\delta})\\,R(\\beta)'],
         bindings: [
           { labelTex: '\\beta', valueKey: 'beta', unit: '°' },
@@ -326,8 +352,8 @@ export const waveplateMeta: DemoMeta = {
       },
       {
         id: 'state',
-        title: '偏振态',
-        body: '振幅比与 Δφ 决定轨迹：同相→线；等幅且 Δφ=±90°→圆；其余→椭圆。',
+        title: '③ 合成',
+        body: '把 Ex(t)、Ey(t) 画在同一平面：轨迹形状=偏振态。口诀见画面底栏。',
         formulas: ['E_x=\\mathrm{Re}\\{J_x e^{-i\\omega t}\\}'],
         bindings: [
           { labelTex: 'A_x', valueKey: 'Ax', unit: '' },

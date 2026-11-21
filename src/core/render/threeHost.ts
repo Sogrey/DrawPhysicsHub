@@ -21,6 +21,8 @@ export interface ThreeHost {
   resetView(): void
   /** demo adapter 按场景尺度取景（简谐近景 / 抛体远景） */
   setViewDefaults(opts: ThreeViewDefaults): void
+  /** 临时套用预设视角（不改默认；重置仍回 setViewDefaults） */
+  applyView(opts: ThreeViewDefaults): void
 }
 
 export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
@@ -167,6 +169,16 @@ export function createThreeHost(canvas: HTMLCanvasElement): ThreeHost {
       pitch = defaultPitch
       distance = defaultDistance
       lookAt.copy(defaultLookAt)
+      applyCamera()
+      renderer.render(scene, camera)
+    },
+    applyView(opts: ThreeViewDefaults) {
+      if (opts.lookAt) lookAt.set(...opts.lookAt)
+      if (opts.yaw != null) yaw = opts.yaw
+      if (opts.pitch != null) pitch = Math.max(-0.2, Math.min(1.2, opts.pitch))
+      if (opts.distance != null) {
+        distance = Math.max(distanceMin, Math.min(distanceMax, opts.distance))
+      }
       applyCamera()
       renderer.render(scene, camera)
     },
