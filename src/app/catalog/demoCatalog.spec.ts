@@ -27,10 +27,10 @@ describe('demoCatalog', () => {
   it('merges planned soon entries and orders subjects', () => {
     const items = buildCatalogItems(live)
     expect(items.some((i) => i.id === 'mech-projectile' && i.status === 'live')).toBe(true)
-    expect(items.some((i) => i.subject === '电磁学' && i.status === 'soon')).toBe(true)
+    expect(items.some((i) => i.subject === '量子力学' && i.status === 'soon')).toBe(true)
     const tree = buildDemoTree(items)
     expect(tree[0]?.subject).toBe('力学')
-    expect(tree.map((s) => s.subject)).toContain('光学')
+    expect(tree.map((s) => s.subject)).toContain('量子力学')
   })
 
   it('filters by query / tag / subject', () => {
@@ -71,7 +71,7 @@ describe('demoCatalog', () => {
     const tree = buildDemoTree(items)
     const em = tree.find((s) => s.subject === '电磁学')!
     const opt = tree.find((s) => s.subject === '光学')!
-    expect(em.categories.map((c) => c.name).slice(0, 2)).toEqual(['静电场', '电流磁场'])
+    expect(em.categories.map((c) => c.name)).toEqual(['静电场', '电磁感应'])
     expect(em.categories.find((c) => c.name === '静电场')!.items[0]!.status).toBe('live')
     expect(opt.categories[0]!.name).toBe('几何光学')
     expect(opt.categories.map((c) => c.name)).toContain('偏振')
