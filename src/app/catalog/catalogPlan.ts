@@ -20,113 +20,92 @@ export const SUBJECT_ORDER = [
   '理论力学',
 ] as const
 
+/**
+ * 各学科内分类顺序（教材章节序）；未列出的分类按中文排序附后。
+ * 见 docs/电磁内容规范.md、docs/光学内容规范.md、docs/力学内容规范.md。
+ */
+export const CATEGORY_ORDER: Record<string, readonly string[]> = {
+  力学: [
+    '质点运动学',
+    '牛顿定律',
+    '动量',
+    '动量和角动量',
+    '动能和势能',
+    '刚体力学',
+    '振动',
+    '波动',
+  ],
+  电磁学: ['静电场', '电流磁场', '洛伦兹力', '电磁感应'],
+  光学: ['几何光学', '干涉', '衍射', '偏振'],
+  热学: ['分子动理论', '热力学循环'],
+  量子力学: ['束缚态'],
+  理论力学: ['转动参考系'],
+}
+
 /** 无真实截图时的通用占位封面（public 路径） */
 export const PLACEHOLDER_COVER = '/covers/placeholder.svg'
 
 /** 一期/近期规划中尚未落地的演示（目录先露出） */
 export const PLANNED_SOON: PlannedEntry[] = [
-  // 力学补齐
+  // —— 电磁学（M5-11 目录预告）——
   {
-    id: 'mech-natural-frame',
-    subject: '力学',
-    category: '质点运动学',
-    title: '自然坐标系速度/加速度',
-    tags: ['切向', '法向', '曲率'],
-  },
-  {
-    id: 'mech-wave-transverse',
-    subject: '力学',
-    category: '波动',
-    title: '横波形成与传播',
-    tags: ['波动', '传播'],
-  },
-  {
-    id: 'mech-standing-wave',
-    subject: '力学',
-    category: '波动',
-    title: '驻波',
-    tags: ['驻波', '叠加'],
-  },
-  {
-    id: 'mech-rotation-axis',
-    subject: '力学',
-    category: '刚体力学',
-    title: '定轴转动',
-    tags: ['角速度', '刚体'],
-  },
-  {
-    id: 'mech-energy-curve',
-    subject: '力学',
-    category: '动能和势能',
-    title: '机械能 / 势能曲线',
-    tags: ['势能', '守恒'],
-  },
-  // 电磁学
-  {
-    id: 'em-point-charge',
+    id: 'em-potential',
     subject: '电磁学',
     category: '静电场',
-    title: '点电荷电场叠加',
-    tags: ['电场', '库仑'],
+    title: '电势与等势线',
+    tags: ['电势', '等势线'],
   },
   {
-    id: 'em-dipole',
-    subject: '电磁学',
-    category: '静电场',
-    title: '电偶极子场',
-    tags: ['偶极', '电场'],
-  },
-  {
-    id: 'em-wire-b',
+    id: 'em-loop-b',
     subject: '电磁学',
     category: '电流磁场',
-    title: '无限长直导线磁场',
-    tags: ['磁场', '毕奥-萨伐尔'],
+    title: '载流圆环磁场',
+    tags: ['圆环', '毕奥-萨伐尔'],
   },
   {
-    id: 'em-cyclotron',
+    id: 'em-ampere',
     subject: '电磁学',
     category: '洛伦兹力',
-    title: '洛伦兹力回旋',
-    tags: ['洛伦兹力', '回旋'],
+    title: '安培力（导线受力）',
+    tags: ['安培力', '电流'],
   },
   {
-    id: 'em-lenz',
+    id: 'em-motional-emf',
     subject: '电磁学',
     category: '电磁感应',
-    title: '磁通量 / 楞次定律',
-    tags: ['感应', '楞次'],
+    title: '动生电动势',
+    tags: ['动生', '切割磁感线'],
   },
-  // 光学
+  // —— 光学（M5-12 目录预告）——
   {
-    id: 'opt-double-slit',
-    subject: '光学',
-    category: '干涉',
-    title: '双缝干涉条纹',
-    tags: ['干涉', '杨氏'],
-  },
-  {
-    id: 'opt-diffraction',
-    subject: '光学',
-    category: '衍射',
-    title: '单缝衍射',
-    tags: ['衍射'],
-  },
-  {
-    id: 'opt-malus',
-    subject: '光学',
-    category: '偏振',
-    title: '偏振片起偏检偏（马吕斯）',
-    tags: ['偏振', '马吕斯'],
-  },
-  {
-    id: 'opt-refraction',
+    id: 'opt-lens',
     subject: '光学',
     category: '几何光学',
-    title: '反射折射光路',
-    tags: ['折射', '斯涅尔'],
+    title: '薄透镜成像',
+    tags: ['透镜', '成像'],
   },
-  // 热学 / 量子（代表条）
+  {
+    id: 'opt-thin-film',
+    subject: '光学',
+    category: '干涉',
+    title: '薄膜干涉',
+    tags: ['薄膜', '光程差'],
+  },
+  {
+    id: 'opt-grating',
+    subject: '光学',
+    category: '衍射',
+    title: '光栅衍射',
+    tags: ['光栅', '衍射'],
+  },
+  {
+    id: 'opt-birefringence',
+    subject: '光学',
+    category: '偏振',
+    title: '双折射光路',
+    tags: ['双折射', 'o光', 'e光'],
+  },
+  // —— 热学 / 量子 / 理论力学（代表条）——
   {
     id: 'thermo-gas',
     subject: '热学',
@@ -169,6 +148,22 @@ export const LIVE_COVERS: Record<string, string> = {
   'mech-forced': '/covers/mech-forced.png',
   'mech-pendulum': '/covers/mech-pendulum.png',
   'mech-circular': '/covers/mech-circular.png',
+  'mech-natural-frame': '/covers/mech-natural-frame.png',
   'mech-incline': '/covers/mech-incline.png',
   'mech-rolling': '/covers/mech-rolling.png',
+  'mech-rotation-axis': '/covers/mech-rotation-axis.png',
+  'mech-wave-transverse': '/covers/mech-wave-transverse.png',
+  'mech-standing-wave': '/covers/mech-standing-wave.png',
+  'mech-energy-curve': '/covers/mech-energy-curve.png',
+  'mech-angular-momentum': '/covers/mech-angular-momentum.png',
+  'em-point-charge': '/covers/em-point-charge.png',
+  'em-dipole': '/covers/em-dipole.png',
+  'em-wire-b': '/covers/em-wire-b.png',
+  'em-cyclotron': '/covers/em-cyclotron.png',
+  'em-lenz': '/covers/em-lenz.png',
+  'opt-double-slit': '/covers/opt-double-slit.png',
+  'opt-diffraction': '/covers/opt-diffraction.png',
+  'opt-malus': '/covers/opt-malus.png',
+  'opt-waveplate': '/covers/opt-waveplate.png',
+  'opt-refraction': '/covers/opt-refraction.png',
 }

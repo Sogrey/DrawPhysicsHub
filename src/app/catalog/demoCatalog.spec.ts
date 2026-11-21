@@ -40,4 +40,40 @@ describe('demoCatalog', () => {
       true,
     )
   })
+
+  it('orders EM / optics categories by textbook sequence', () => {
+    const items = buildCatalogItems([
+      fake({
+        id: 'em-lenz',
+        subject: '电磁学',
+        category: '电磁感应',
+        docs: { title: '楞次', summary: '' },
+      }),
+      fake({
+        id: 'em-point-charge',
+        subject: '电磁学',
+        category: '静电场',
+        docs: { title: '点电荷', summary: '' },
+      }),
+      fake({
+        id: 'opt-malus',
+        subject: '光学',
+        category: '偏振',
+        docs: { title: '马吕斯', summary: '' },
+      }),
+      fake({
+        id: 'opt-refraction',
+        subject: '光学',
+        category: '几何光学',
+        docs: { title: '折射', summary: '' },
+      }),
+    ])
+    const tree = buildDemoTree(items)
+    const em = tree.find((s) => s.subject === '电磁学')!
+    const opt = tree.find((s) => s.subject === '光学')!
+    expect(em.categories.map((c) => c.name).slice(0, 2)).toEqual(['静电场', '电流磁场'])
+    expect(em.categories.find((c) => c.name === '静电场')!.items[0]!.status).toBe('live')
+    expect(opt.categories[0]!.name).toBe('几何光学')
+    expect(opt.categories.map((c) => c.name)).toContain('偏振')
+  })
 })

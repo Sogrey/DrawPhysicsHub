@@ -1,6 +1,7 @@
 import type { DemoMeta } from '@/core/physics/types'
 import { publicAsset } from './assetUrl'
 import {
+  CATEGORY_ORDER,
   LIVE_COVERS,
   PLACEHOLDER_COVER,
   PLANNED_SOON,
@@ -41,8 +42,19 @@ export interface CatalogFilter {
 }
 
 export function thumbTone(category: string, subject?: string): string {
-  if (subject === '电磁学') return 'em'
-  if (subject === '光学') return 'optics'
+  if (subject === '电磁学') {
+    if (category.includes('静电')) return 'em'
+    if (category.includes('磁')) return 'em'
+    if (category.includes('洛伦兹') || category.includes('安培')) return 'em'
+    if (category.includes('感应')) return 'em'
+    return 'em'
+  }
+  if (subject === '光学') {
+    if (category.includes('几何')) return 'optics'
+    if (category.includes('干涉') || category.includes('衍射')) return 'optics'
+    if (category.includes('偏振')) return 'optics'
+    return 'optics'
+  }
   if (subject === '热学') return 'thermo'
   if (subject === '量子力学') return 'qm'
   if (subject === '理论力学') return 'theo'
@@ -54,6 +66,13 @@ export function thumbTone(category: string, subject?: string): string {
   if (category.includes('波动')) return 'wave'
   if (category.includes('势能') || category.includes('动能')) return 'energy'
   return 'default'
+}
+
+function categoryRank(subject: string, category: string): number {
+  const order = CATEGORY_ORDER[subject]
+  if (!order) return 1000
+  const i = order.indexOf(category)
+  return i >= 0 ? i : 500 + category.charCodeAt(0)
 }
 
 function fromMeta(d: DemoMeta): CatalogItem {
@@ -119,7 +138,10 @@ export function buildDemoTree(items: CatalogItem[]): CatalogSubject[] {
 
   return subjects.map((subject) => {
     const cats = bySubject.get(subject)!
-    const names = [...cats.keys()].sort((a, b) => a.localeCompare(b, 'zh'))
+    const names = [...cats.keys()].sort(
+      (a, b) =>
+        categoryRank(subject, a) - categoryRank(subject, b) || a.localeCompare(b, 'zh'),
+    )
     const categories = names.map((name) => ({
       name,
       items: [...(cats.get(name) ?? [])].sort((a, b) => {
@@ -127,10 +149,7 @@ export function buildDemoTree(items: CatalogItem[]): CatalogSubject[] {
         return a.title.localeCompare(b.title, 'zh')
       }),
     }))
-    const items = categories.flatMap((c) => c.items).sort((a, b) => {
-      if (a.status !== b.status) return a.status === 'live' ? -1 : 1
-      return a.title.localeCompare(b.title, 'zh')
-    })
+    const items = categories.flatMap((c) => c.items)
     return { subject, categories, items }
   })
 }
