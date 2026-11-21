@@ -279,6 +279,9 @@
 - ✅ M5-10 反射折射光路（`opt-refraction`）
 - ✅ M5-11 电磁包目录（`docs/电磁内容规范.md` + `CATEGORY_ORDER` + `PLANNED_SOON` 预告）
 - ✅ M5-12 光学包目录（`docs/光学内容规范.md` + 分类序 + 薄透镜/薄膜/光栅/双折射预告）
+- ✅ 光学增补：`opt-lens` 薄透镜、`opt-thin-film` 薄膜、`opt-grating` 光栅、`opt-birefringence` 双折射
+- ✅ 电磁增补：`em-potential` 电势、`em-loop-b` 圆环 B、`em-ampere` 安培力、`em-motional-emf` 动生
+- ✅ 热学：`thermo-gas` 分子压强、`thermo-carnot` 卡诺循环
 - ✅ M5-13 场可视化质量：箭头密度自适应（`adaptiveFieldDensity` → 点电荷/偶极/直导线）
 - ✅ M5-14 干涉强度公式与画面对照（双缝 cos² / 单缝 sinc² 顶栏代入 + 级次标记）
 - ✅ M5-15 3D 偏振演示相机引导（`cameraPresets` + HUD 预设：光路侧视 / 迎面看轴·椭圆 / 斜俯视）
