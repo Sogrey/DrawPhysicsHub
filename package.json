@@ -15,6 +15,11 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:mechanics": "vitest run src/demos/mechanics",
+    "test:em": "vitest run src/demos/em",
+    "test:optics": "vitest run src/demos/optics",
+    "audit:mechanics": "node scripts/audit-mechanics.mjs",
+    "audit:em-optics": "node scripts/audit-em-optics.mjs",
     "typecheck": "vue-tsc -b --pretty false"
   },
   "dependencies": {
