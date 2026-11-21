@@ -59,7 +59,8 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 3. 专用画面放同目录 `render*.ts`
 4. 用 `registerDemoBundle({ model, adapter, meta })`（或分别 `registerModel` / `registerAdapter` / `registerDemo`），并在 `demos/index.ts` 调用
 5. （可选）极限行为与挑战 `*.spec.ts`
-6. （可选）在 `LIVE_COVERS` 登记封面，并把截图放到 `public/covers/<id>.png`（可用 `scripts/capture-covers.mjs`）
+6. （可选）在 `LIVE_COVERS` 登记封面，并把截图放到 `public/covers/<id>.png`（可用 `scripts/capture-covers.mjs`）  
+   实操与踩坑见 [演示开发经验与封面截图.md](./演示开发经验与封面截图.md)
 7. **勿改** `DemoPlayer.vue`；复用壳与 `components/demo/*`
 
 ## 已注册力学演示（`demos/index.ts`）

@@ -22,6 +22,7 @@ pnpm preview
 | 文档 | 说明 |
 |------|------|
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | 分层边界、Demo 协议、已注册演示、如何新增 |
+| [`docs/演示开发经验与封面截图.md`](docs/演示开发经验与封面截图.md) | 新演示路径、教学可视化、封面截图与踩坑 |
 | [`docs/DrawPhysicsHub开发计划.md`](docs/DrawPhysicsHub开发计划.md) | 里程碑与任务（AI / 协作） |
 | [`docs/DrawPhysicsHub开发计划.html`](docs/DrawPhysicsHub开发计划.html) | 同上，可勾选进度（本地保存） |
 | [`docs/vue-threejs-物理可视化可行性评估.md`](docs/vue-threejs-物理可视化可行性评估.md) | Vue+Three 可行性与架构结论 |
@@ -35,7 +36,7 @@ pnpm preview
 | **M2 播放器与目录** | ✅ 完成（学科树、搜索标签、多学科卡片、真实封面、全屏、错误边界、FPS HUD、浅色壳 + i18n） |
 | **M3 场景模板** | ⏳ 未单独立项；能力已以 Adapter + 渲染原语形式沉淀 |
 | **M4 力学样板包** | ✅ **完成**（15 可玩 + [内容规范](docs/力学内容规范.md) + [抽检报告](docs/力学包抽检报告.md) 56/56） |
-| **M5 电磁/光学** | 进行中（10 样板 ✅ · 目录规范 M5-11/12 ✅ · 抽检 41/41 · 下一 M5-13） |
+| **M5 电磁/光学** | ✅ 样板段完成（10 演示 + 目录/场密度/公式对照/3D 相机引导 + 抽检 41） |
 
 ### 平台能力（相对抛体样板）
 
@@ -81,12 +82,13 @@ M4 已完成。复验：`pnpm test:mechanics` / `pnpm audit:mechanics`。封面�
 | `opt-malus` | 偏振片起偏检偏（马吕斯） | M5-08 ✅ |
 | `opt-waveplate` | 波片与偏振态（线/圆/椭圆） | M5-09 ✅ |
 | `opt-refraction` | 反射折射光路（斯涅尔） | M5-10 ✅ |
+| `opt-lens` | 薄透镜成像 | 几何光学增补 ✅ |
 
 目录规范：[`docs/电磁内容规范.md`](docs/电磁内容规范.md) · [`docs/光学内容规范.md`](docs/光学内容规范.md)  
 抽检：`pnpm test:em` / `pnpm test:optics` / `pnpm audit:em-optics`  
 预告（敬请期待）：电势线、圆环 B、安培力、动生；薄透镜、薄膜、光栅、双折射。
 
-下一优先：M5-13 场可视化箭头密度自适应等。
+下一优先：M6 发布与一期验收。
 
 ## 技术要点
 
