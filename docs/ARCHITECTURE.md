@@ -79,6 +79,8 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 2D 图注约定：优先用 `primitives2d` 的 `drawAngleMark` / `drawDimLine` / `drawDiagramLabel`，避免与轴线/轨迹/顶栏 HUD 压线。  
 3D 标签可用 `primitives3d.createTextSprite`。水平转盘类：物理 `(x,y)` → 场景 `(x,z)`，`Ω∥+Y`（见《演示开发经验》）。
 
+进度与后期计划：[`开发记录与路线图.md`](./开发记录与路线图.md)（v1.7）。
+
 ## 禁止事项
 
 - 不做通用动态几何 / CAS 白板

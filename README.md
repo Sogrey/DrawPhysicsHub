@@ -11,8 +11,9 @@ pnpm install
 pnpm dev          # 开发：base 为 /DrawPhysicsHub/
 pnpm test         # Vitest
 pnpm typecheck
-pnpm build
+pnpm build        # vue-tsc + vite + spa-404
 pnpm preview
+pnpm list:demos   # 生成 docs/演示清单.md 并核对封面
 ```
 
 浏览器打开演示目录，可选力学包中任一演示（默认样板为 **抛体运动**）。
@@ -21,6 +22,7 @@ pnpm preview
 
 | 文档 | 说明 |
 |------|------|
+| [`docs/开发记录与路线图.md`](docs/开发记录与路线图.md) | **开发记录 · 下一步 · 后期计划**（优先读） |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | 分层边界、Demo 协议、已注册演示、如何新增 |
 | [`docs/演示开发经验与封面截图.md`](docs/演示开发经验与封面截图.md) | 新演示路径、教学可视化、封面截图与踩坑 |
 | [`docs/DrawPhysicsHub开发计划.md`](docs/DrawPhysicsHub开发计划.md) | 里程碑与任务（AI / 协作） |
@@ -28,7 +30,7 @@ pnpm preview
 | [`docs/vue-threejs-物理可视化可行性评估.md`](docs/vue-threejs-物理可视化可行性评估.md) | Vue+Three 可行性与架构结论 |
 | [`docs/组件复用拆分.md`](docs/组件复用拆分.md) | Adapter 化与可复用组件 / composable 清单 |
 
-## 当前进度（2026-11-23 · 计划 v1.6）
+## 当前进度（2026-11-23 · 计划 v1.7）
 
 | 里程碑 | 状态 |
 |--------|------|
@@ -38,6 +40,7 @@ pnpm preview
 | **M4 力学样板包** | ✅ **完成**（15 可玩 + [内容规范](docs/力学内容规范.md) + [抽检报告](docs/力学包抽检报告.md) 56/56） |
 | **M5 电磁/光学** | ✅ **完成**（18 演示 + 目录/场密度/公式对照/3D 相机 + [抽检](docs/电磁光学抽检报告.md)） |
 | **跨学科代表条** | ✅ 热学 2 · 量子 1 · 理论力学 1（`PLANNED_SOON` 已清空） |
+| **M6 发布验收** | ✅ 主体完成（见下；Pages/fps 收尾中） |
 
 **可玩合计：37**（力学 15 + 电磁 9 + 光学 9 + 热学 2 + 量子 1 + 理论力学 1）。
 
@@ -113,10 +116,37 @@ M4 已完成。复验：`pnpm test:mechanics` / `pnpm audit:mechanics`。封面�
 抽检：`pnpm test:em` / `pnpm test:optics` / `pnpm audit:em-optics`  
 `PLANNED_SOON` 已清空（代表学科首条均已落地）。
 
-下一优先：M6 发布与一期验收（演示数已超 ≥30）。
+### M6 发布（主体完成）
+
+| 项 | 状态 |
+|----|------|
+| M6-01 生产构建与静态部署 | ✅ [发布与部署](docs/发布与部署.md) |
+| M6-02 演示清单脚本 | ✅ `pnpm list:demos` → [演示清单](docs/演示清单.md) |
+| M6-03 SEO / OG | ✅ `index.html` Open Graph / Twitter |
+| M6-04 性能基线 | ✅ [性能基线](docs/性能基线.md)（实机 fps 待填） |
+| M6-05 键盘播放 | ✅ Space / R·Home / F |
+| M6-06 演示数 ≥30 | ✅ 当前 37 |
+| M6-07 已知问题 | ✅ [一期已知问题](docs/一期已知问题.md) |
+| M6-08 评估对照 | ✅ 评估附录 C 已更新 |
+| M6-09 录屏素材 | ⏳ 封面已有；短录屏可选 |
+| M6-10 评审清单 | ✅ [一期评审清单](docs/一期评审清单.md) |
+
+线上：`https://sogrey.github.io/DrawPhysicsHub/`（`main` 推送后由 Actions 发布）。
+
+### 下一步 / 后期计划（摘要）
+
+| 阶段 | 内容 |
+|------|------|
+| **立即** | Pages 抽检 + 实机 fps；可选短录屏（M6-09） |
+| **近前 M7** | 热学 / 量子·原子扩包 + Worker 数值 |
+| **后期 M8** | 理论力学 / 电动力学进阶、晶格、课次包 |
+| **再后 M9** | 移动端、对比双视图、性能降级、投影模式等 |
+| **Backlog** | 作者工具 / LMS 等（不做通用动态几何白板） |
+
+完整开发记录与路线：[docs/开发记录与路线图.md](docs/开发记录与路线图.md)。
 
 ## 技术要点
 
 - 包管理：`packageManager` + `preinstall only-allow pnpm`；Windows 下 `.npmrc` 使用 `node-linker=hoisted`
-- 部署 `base`：`/DrawPhysicsHub/`（见 `vite.config.ts`）
+- 部署 `base`：`/DrawPhysicsHub/`（见 `vite.config.ts`）；SPA 深链靠 `dist/404.html`
 - 物理对错只在 `core/physics` + 各 demo model；渲染只消费 `ObserveSnapshot`
