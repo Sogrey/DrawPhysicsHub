@@ -256,6 +256,33 @@ async function toggleFullscreen() {
   }
 }
 
+/** M6-05：播放快捷键（输入框内不拦截） */
+function onPlayerKeydown(e: KeyboardEvent) {
+  const t = e.target as HTMLElement | null
+  const tag = t?.tagName
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t?.isContentEditable) return
+
+  if (e.code === 'Space') {
+    e.preventDefault()
+    if (playing.value) pause()
+    else play()
+    return
+  }
+  if (e.key === 'Home' || e.key === 'r' || e.key === 'R') {
+    if (e.key === 'r' || e.key === 'R') {
+      if (e.ctrlKey || e.metaKey || e.altKey) return
+    }
+    e.preventDefault()
+    reset()
+    return
+  }
+  if (e.key === 'f' || e.key === 'F') {
+    if (e.ctrlKey || e.metaKey || e.altKey) return
+    e.preventDefault()
+    void toggleFullscreen()
+  }
+}
+
 watch(activeView, async (id) => {
   await Promise.resolve()
   setupActiveView(id)
@@ -280,6 +307,7 @@ onMounted(() => {
   }
   window.addEventListener('resize', onResize)
   document.addEventListener('fullscreenchange', onFullscreenChange)
+  window.addEventListener('keydown', onPlayerKeydown)
 })
 
 onUnmounted(() => {
@@ -296,6 +324,7 @@ onUnmounted(() => {
   modelApi.dispose()
   window.removeEventListener('resize', onResize)
   document.removeEventListener('fullscreenchange', onFullscreenChange)
+  window.removeEventListener('keydown', onPlayerKeydown)
 })
 </script>
 

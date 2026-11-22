@@ -28,11 +28,12 @@ const emit = defineEmits<{
       <button
         type="button"
         class="primary"
+        :title="playing ? '暂停 (Space)' : '播放 (Space)'"
         @click="playing ? emit('pause') : emit('play')"
       >
         {{ playing ? '暂停' : '播放' }}
       </button>
-      <button type="button" @click="emit('reset')">复位</button>
+      <button type="button" title="复位 (R / Home)" @click="emit('reset')">复位</button>
       <div class="playback-opts">
         <label class="speed">
           倍率
