@@ -11,7 +11,7 @@
   "scripts": {
     "preinstall": "npx --yes only-allow pnpm",
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vue-tsc -b && vite build && node scripts/spa-404.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -20,6 +20,7 @@
     "test:optics": "vitest run src/demos/optics",
     "audit:mechanics": "node scripts/audit-mechanics.mjs",
     "audit:em-optics": "node scripts/audit-em-optics.mjs",
+    "list:demos": "node scripts/list-demos.mjs",
     "typecheck": "vue-tsc -b --pretty false"
   },
   "dependencies": {
