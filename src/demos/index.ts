@@ -24,6 +24,8 @@ import { registerLenzDemo } from './em/lenz'
 import { registerMotionalEmfDemo } from './em/motionalEmf'
 import { registerGasDemo } from './thermo/gas'
 import { registerCarnotDemo } from './thermo/carnot'
+import { registerWellDemo } from './qm/well'
+import { registerCoriolisDemo } from './theo/coriolis'
 import { registerDoubleSlitDemo } from './optics/doubleSlit'
 import { registerDiffractionDemo } from './optics/diffraction'
 import { registerMalusDemo } from './optics/malus'
@@ -62,6 +64,8 @@ export function registerAllDemos(): void {
   registerMotionalEmfDemo()
   registerGasDemo()
   registerCarnotDemo()
+  registerWellDemo()
+  registerCoriolisDemo()
   registerDoubleSlitDemo()
   registerDiffractionDemo()
   registerMalusDemo()

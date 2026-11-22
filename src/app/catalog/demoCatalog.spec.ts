@@ -27,10 +27,10 @@ describe('demoCatalog', () => {
   it('merges planned soon entries and orders subjects', () => {
     const items = buildCatalogItems(live)
     expect(items.some((i) => i.id === 'mech-projectile' && i.status === 'live')).toBe(true)
-    expect(items.some((i) => i.subject === '量子力学' && i.status === 'soon')).toBe(true)
+    // 六大代表学科已全部落地：预告清单当前为空，不应存在 soon 条目
+    expect(items.filter((i) => i.status === 'soon')).toEqual([])
     const tree = buildDemoTree(items)
     expect(tree[0]?.subject).toBe('力学')
-    expect(tree.map((s) => s.subject)).toContain('量子力学')
   })
 
   it('filters by query / tag / subject', () => {

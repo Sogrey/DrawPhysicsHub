@@ -47,21 +47,7 @@ export const PLACEHOLDER_COVER = '/covers/placeholder.svg'
 
 /** 一期/近期规划中尚未落地的演示（目录先露出） */
 export const PLANNED_SOON: PlannedEntry[] = [
-  // —— 热学已起步；量子 / 理论力学代表预告 ——
-  {
-    id: 'qm-well',
-    subject: '量子力学',
-    category: '束缚态',
-    title: '一维无限深势阱',
-    tags: ['波函数', '能级'],
-  },
-  {
-    id: 'theo-coriolis',
-    subject: '理论力学',
-    category: '转动参考系',
-    title: '科里奥利力示意',
-    tags: ['非惯性系'],
-  },
+  // 代表学科首条均已落地；后续扩包时再往这里加预告
 ]
 
 /**
@@ -95,6 +81,8 @@ export const LIVE_COVERS: Record<string, string> = {
   'em-motional-emf': '/covers/em-motional-emf.png',
   'thermo-gas': '/covers/thermo-gas.png',
   'thermo-carnot': '/covers/thermo-carnot.png',
+  'qm-well': '/covers/qm-well.png',
+  'theo-coriolis': '/covers/theo-coriolis.png',
   'opt-double-slit': '/covers/opt-double-slit.png',
   'opt-diffraction': '/covers/opt-diffraction.png',
   'opt-malus': '/covers/opt-malus.png',
