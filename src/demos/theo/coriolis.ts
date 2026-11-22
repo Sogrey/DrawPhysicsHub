@@ -218,7 +218,7 @@ export const coriolisMeta: DemoMeta = {
       '\\vec a_{\\mathrm{cf}}=\\Omega^2\\vec r_\\perp',
     ],
     insight:
-      '灰盘+⊙=Ω；绿=v；粉=a_cor（与 v 成直角）；青=a_cf；紫虚线=初速方向。3D 中绿竖箭=Ω。',
+      '灰盘+⊙=Ω；绿=v；粉=a_cor（与 v 成直角）；青=a_cf；紫虚线=初速方向。3D：水平转盘，灰竖箭=Ω（向上）。',
     legend: [
       { color: '#94a3b8', label: '转盘 / Ω(⊙)' },
       { color: '#4ade80', label: '相对速度 v' },
