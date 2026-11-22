@@ -2,7 +2,7 @@
 
 | 文件 | 用途 |
 |------|------|
-| [DrawPhysicsHub开发计划.md](./DrawPhysicsHub开发计划.md) | 分期 / 里程碑 / 任务清单（与 HTML 同步，**v1.5**） |
+| [DrawPhysicsHub开发计划.md](./DrawPhysicsHub开发计划.md) | 分期 / 里程碑 / 任务清单（与 HTML 同步，**v1.6**） |
 | [DrawPhysicsHub开发计划.html](./DrawPhysicsHub开发计划.html) | 人工勾选进度版（localStorage） |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 分层边界、Demo 协议、已注册演示、如何新增 |
 | [演示开发经验与封面截图.md](./演示开发经验与封面截图.md) | **实操总结**：新演示路径、教学可视化、封面截图命令与踩坑 |
@@ -17,7 +17,7 @@
 仓库总览与命令见根目录 [README.md](../README.md)。
 
 **教学样板：** `src/demos/mechanics/projectile.ts`  
-**Adapter 验收：** 简谐及后续力学演示均只改 `demos/` + 注册，Player 零修改。  
-**进度摘要：** M1 ✅ · M2 ✅ · M4 ✅ · M5 样板段 ✅（10 演示 + 目录/场密度/公式对照/3D 相机 + 抽检）· 下一 M6。
+**Adapter 验收：** 自简谐起，各学科演示均只改 `demos/` + 注册，Player 零修改。  
+**进度摘要：** M1 ✅ · M2 ✅ · M4 ✅ · M5 ✅ · 热/量子/理论力学代表条 ✅ · 可玩 **37** · 下一优先 M6。
 
 **上手建议：** 新增演示先读 [演示开发经验与封面截图.md](./演示开发经验与封面截图.md)，再对照对应学科内容规范。

@@ -63,27 +63,21 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
    实操与踩坑见 [演示开发经验与封面截图.md](./演示开发经验与封面截图.md)
 7. **勿改** `DemoPlayer.vue`；复用壳与 `components/demo/*`
 
-## 已注册力学演示（`demos/index.ts`）
+## 已注册演示（摘要 · 详见根 README）
 
-| id | 目录入口 | 要点 |
-|----|----------|------|
-| `mech-projectile` | `projectile.ts` | 教学样板：分解 / 对比 / scrub |
-| `mech-circular` | `circular.ts` | 匀速圆周、向心加速度 |
-| `mech-natural-frame` | `naturalFrame.ts` | 自然坐标系：椭圆轨道 aₜ / aₙ |
-| `mech-incline` | `incline.ts` | 斜面滑块、摩擦、能量 |
-| `mech-harmonic` | `harmonic.ts` | 简谐；Adapter 验收样板 |
-| `mech-damped` | `damped.ts` | 欠阻尼包络 |
-| `mech-forced` | `forced.ts` | 受迫稳态 / 共振 |
-| `mech-pendulum` | `pendulum.ts` | 单摆小角 / 大摆角 |
-| `mech-collision-1d` | `collision.ts` | 一维碰撞 |
-| `mech-rolling` | `rolling.ts` | 无滑滚动、\(v=\omega R\)、动能分配 |
-| `mech-rotation-axis` | `rotationAxis.ts` | 定轴转动：ω/α、τ=Iα、轮缘线速度 |
-| `mech-wave-transverse` | `waveTransverse.ts` | 行进横波：λ、T、相速 v=λ/T |
-| `mech-standing-wave` | `standingWave.ts` | 驻波：波节/波腹、包络 \(2A|\cos kx|\) |
-| `mech-energy-curve` | `energyCurve.ts` | 势能曲线 U(x) 与 E、K 联动 |
-| `mech-angular-momentum` | `angularMomentum.ts` | 对点角动量：直线掠过，L=mvb |
+力学 15 条（`demos/mechanics/`，样板 `mech-projectile`）+ 电磁 9 + 光学 9 + 热学 2 + 量子 1 + 理论力学 1 = **37**。注册入口：`demos/index.ts`。
 
-2D 图注约定：优先用 `primitives2d` 的 `drawAngleMark` / `drawDimLine` / `drawDiagramLabel`，避免与轴线/轨迹压线。
+| 学科 | 代表 id | 目录 |
+|------|---------|------|
+| 力学 | `mech-projectile` … | `demos/mechanics/` |
+| 电磁 | `em-point-charge` … | `demos/em/` |
+| 光学 | `opt-double-slit` … | `demos/optics/` |
+| 热学 | `thermo-gas` / `thermo-carnot` | `demos/thermo/` |
+| 量子 | `qm-well` | `demos/qm/` |
+| 理论力学 | `theo-coriolis` | `demos/theo/` |
+
+2D 图注约定：优先用 `primitives2d` 的 `drawAngleMark` / `drawDimLine` / `drawDiagramLabel`，避免与轴线/轨迹/顶栏 HUD 压线。  
+3D 标签可用 `primitives3d.createTextSprite`。水平转盘类：物理 `(x,y)` → 场景 `(x,z)`，`Ω∥+Y`（见《演示开发经验》）。
 
 ## 禁止事项
 
