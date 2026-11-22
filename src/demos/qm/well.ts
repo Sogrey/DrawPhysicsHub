@@ -48,12 +48,17 @@ export function createWellModel(): PhysicsModel {
       const psi = new Float32Array(Nsamp)
       const dens = new Float32Array(Nsamp)
       const re = new Float32Array(Nsamp)
+      const im = new Float32Array(Nsamp)
+      // ψ(x,t)=ψₙ(x) e^{-iEt/ħ} → Re=ψ cosφ, Im=−ψ sinφ
+      const c = Math.cos(phase)
+      const s = Math.sin(phase)
       for (let i = 0; i < Nsamp; i++) {
         const x = (L * i) / (Nsamp - 1)
         const amp = wellPsi(n, L, x)
         psi[i] = amp
         dens[i] = amp * amp
-        re[i] = amp * Math.cos(phase)
+        re[i] = amp * c
+        im[i] = -amp * s
       }
       // 期望位置（对称 → L/2）
       const xExpect = L / 2
@@ -70,6 +75,7 @@ export function createWellModel(): PhysicsModel {
           psi,
           dens,
           re,
+          im,
           period,
           tMax: period,
           world: L * 0.7 + 1.5,
@@ -172,11 +178,12 @@ export const wellMeta: DemoMeta = {
       '\\hbar=m=1\\Rightarrow E_n=n^2\\pi^2/(2L^2)',
     ],
     insight:
-      '青虚线=ψₙ 静止包络；紫填=|ψ|²（定态不变）；金线=Reψ(t) 随位相振荡。左上/3D 有 φ 位相钟。',
+      '2D：青虚线ψₙ、紫|ψ|²、金Reψ(t)；顶栏钟=φ。3D：金线为(x,Re,Im)复曲线随φ转动，|ψ|²在侧立剖面，青虚线为ψₙ包络。',
     legend: [
       { color: '#38bdf8', label: 'ψₙ 包络（虚线）' },
       { color: '#a78bfa', label: '|ψ|² 概率密度' },
-      { color: '#fbbf24', label: 'Re ψ(t) / 位相' },
+      { color: '#fbbf24', label: 'Reψ(t) / 复曲线' },
+      { color: '#34d399', label: 'Im 轴（3D）' },
       { color: '#94a3b8', label: '势阱壁 V=∞' },
     ],
     steps: [

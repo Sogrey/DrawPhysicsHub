@@ -23,6 +23,20 @@ describe('infinite square well', () => {
     for (let i = 0; i < a.length; i++) expect(b[i]).toBeCloseTo(a[i]!, 5)
   })
 
+  it('sets Re=ψ cosφ and Im=−ψ sinφ', () => {
+    const m = createWellModel()
+    m.init({ n: 1, L: 4 })
+    m.seek?.(2)
+    const o = m.observe().values
+    const phase = Number(o.phase)
+    const psi = o.psi as Float32Array
+    const re = o.re as Float32Array
+    const im = o.im as Float32Array
+    const mid = Math.floor(psi.length / 2)
+    expect(re[mid]!).toBeCloseTo(psi[mid]! * Math.cos(phase), 5)
+    expect(im[mid]!).toBeCloseTo(-psi[mid]! * Math.sin(phase), 5)
+  })
+
   it('uses tMax', () => {
     const m = createWellModel()
     m.init({ n: 1, L: 4 })
