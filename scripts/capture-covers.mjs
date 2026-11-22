@@ -42,6 +42,8 @@ const ALL_DEMOS = [
   { id: 'em-motional-emf', subject: '电磁学' },
   { id: 'thermo-gas', subject: '热学' },
   { id: 'thermo-carnot', subject: '热学' },
+  { id: 'qm-well', subject: '量子力学' },
+  { id: 'theo-coriolis', subject: '理论力学' },
   { id: 'opt-double-slit', subject: '光学' },
   { id: 'opt-diffraction', subject: '光学' },
   { id: 'opt-malus', subject: '光学' },
