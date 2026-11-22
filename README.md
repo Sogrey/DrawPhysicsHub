@@ -42,7 +42,7 @@ pnpm preview
 
 - 三栏教学壳 + `DemoAdapter`：新增演示只改 `demos/` + 注册，**不改** `DemoPlayer.vue`
 - 目录：`app/catalog` 学科→分类树 + 搜索/标签；已实现用 `public/covers/*.png`，未实现「敬请期待」用通用 `placeholder.svg`（路径经 `publicAsset` 拼 Vite `base`）
-- 多学科预告：`catalogPlan.PLANNED_SOON`（电磁 / 光学扩展 + 热 / 量子 / 理论力学代表条）；分类序 `CATEGORY_ORDER`
+- 多学科：电磁 / 光学 / 热学 / 量子 / 理论力学代表条已落地；`PLANNED_SOON` 可继续挂后续预告；分类序 `CATEGORY_ORDER`
 - `tMax` 协议、`pedagogy` 去抛体化、对比轨迹 / 图例 id、纵向堆叠曲线随 \(t\) 揭示
 - 2D 图上参数标注（角度弧 / 尺寸线 / 标签）、3D 平移取景；演示全屏 / 可选 FPS
 
@@ -98,9 +98,16 @@ M4 已完成。复验：`pnpm test:mechanics` / `pnpm audit:mechanics`。封面�
 | `thermo-gas` | 分子碰撞与压强示意 | 热学首条 ✅ |
 | `thermo-carnot` | 卡诺循环 P–V 图 | 热学增补 ✅ |
 
+### 量子 / 理论力学（代表条）
+
+| id | 名称 | 状态 |
+|----|------|------|
+| `qm-well` | 一维无限深势阱 | 量子代表 ✅ |
+| `theo-coriolis` | 科里奥利力示意 | 理论力学代表 ✅ |
+
 目录规范：[`docs/电磁内容规范.md`](docs/电磁内容规范.md) · [`docs/光学内容规范.md`](docs/光学内容规范.md)  
 抽检：`pnpm test:em` / `pnpm test:optics` / `pnpm audit:em-optics`  
-预告（敬请期待）：量子势阱、科里奥利。
+PLANNED_SOON 已清空（代表学科首条均已落地）。
 
 下一优先：M6 发布与一期验收。
 

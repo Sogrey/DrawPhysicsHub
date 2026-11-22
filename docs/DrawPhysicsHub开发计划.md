@@ -257,7 +257,7 @@
 - ✅ 匀速圆周 `mech-circular`
 - ✅ 斜面滑块 `mech-incline`
 
-**当前计数：** 15 个力学演示可玩；每演示均有 `*.spec.ts`；目录另有多学科「敬请期待」。
+**当前计数：** 力学 + 电磁/光学/热学/量子/理论力学代表条均可玩；每演示均有 `*.spec.ts`；`PLANNED_SOON` 已清空。
 
 **验收：** ✅ M4-A1 ≥12 演示可玩（15）；✅ M4-A2 每演示含公式与说明；✅ M4-A3 至少 3 个含自动化数值断言（现 56 项全绿）。
 
@@ -282,6 +282,8 @@
 - ✅ 光学增补：`opt-lens` 薄透镜、`opt-thin-film` 薄膜、`opt-grating` 光栅、`opt-birefringence` 双折射
 - ✅ 电磁增补：`em-potential` 电势、`em-loop-b` 圆环 B、`em-ampere` 安培力、`em-motional-emf` 动生
 - ✅ 热学：`thermo-gas` 分子压强、`thermo-carnot` 卡诺循环
+- ✅ 量子代表：`qm-well` 一维无限深势阱
+- ✅ 理论力学代表：`theo-coriolis` 科里奥利
 - ✅ M5-13 场可视化质量：箭头密度自适应（`adaptiveFieldDensity` → 点电荷/偶极/直导线）
 - ✅ M5-14 干涉强度公式与画面对照（双缝 cos² / 单缝 sinc² 顶栏代入 + 级次标记）
 - ✅ M5-15 3D 偏振演示相机引导（`cameraPresets` + HUD 预设：光路侧视 / 迎面看轴·椭圆 / 斜俯视）
