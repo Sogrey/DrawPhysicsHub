@@ -4,11 +4,10 @@ import { createCoupledOscAdapter } from './coupledOscAdapter'
 
 /** 两质点三弹簧：ω±=√((κ±κc)/m) 简正模；对称/反对称 */
 export function normalFreqs(k: number, kc: number, m: number) {
-  const wSym = Math.sqrt((k + 0) / Math.max(1e-6, m)) // 同相近似 √(k/m) 当墙弹簧 k、耦合 kc
   // 标准：墙-κ-m-κc-m-κ-墙 → ω²=(κ+κc±κc)/m
-  const w1 = Math.sqrt((k + 2 * kc) / Math.max(1e-6, m)) // 反对称（更高）
-  const w2 = Math.sqrt(k / Math.max(1e-6, m)) // 对称
-  return { wSym: w2, wAsym: w1 }
+  const wAsym = Math.sqrt((k + 2 * kc) / Math.max(1e-6, m)) // 反对称（更高）
+  const wSym = Math.sqrt(k / Math.max(1e-6, m)) // 对称
+  return { wSym, wAsym }
 }
 
 export function createCoupledOscModel(): PhysicsModel {

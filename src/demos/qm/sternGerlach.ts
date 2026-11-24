@@ -7,12 +7,22 @@ export function createSternGerlachModel(): PhysicsModel {
   return {
     init(p:ParamValues){ Bgrad=Number(p.Bgrad??1.2); t=0 },
     step(dt){ t=Math.min(period,t+dt) }, seek(time){ t=Math.min(period,Math.max(0,time)) },
-    observe(){
-      const x= -2.5 + 5*t/period; const sep=Bgrad*Math.max(0,x+0.5)*0.35
-      const up=[[x,sep]], dn=[[x,-sep]]
-      const beamU:number[][]=[]; const beamD:number[][]=[]
-      for(let i=0;i<=40;i++){ const xi=-2.5+5*i/40; const s=Bgrad*Math.max(0,xi+0.5)*0.35; beamU.push([xi,s]); beamD.push([xi,-s]) }
-      return { time:t, values:{ Bgrad,x,sep,period,tMax:period,done:t>=period-1e-9?1:0 }, trails:{ path:beamU, pathB:beamD } }
+    observe() {
+      const x = -2.5 + (5 * t) / period
+      const sep = Bgrad * Math.max(0, x + 0.5) * 0.35
+      const beamU: number[][] = []
+      const beamD: number[][] = []
+      for (let i = 0; i <= 40; i++) {
+        const xi = -2.5 + (5 * i) / 40
+        const s = Bgrad * Math.max(0, xi + 0.5) * 0.35
+        beamU.push([xi, s])
+        beamD.push([xi, -s])
+      }
+      return {
+        time: t,
+        values: { Bgrad, x, sep, period, tMax: period, done: t >= period - 1e-9 ? 1 : 0 },
+        trails: { path: beamU, pathB: beamD },
+      }
     },
     reset(){ t=0 }, setParams(p){ if(p.Bgrad!==undefined) Bgrad=Number(p.Bgrad) },
   }

@@ -11,9 +11,9 @@ describe('LC', () => {
   it('energy roughly conserved', () => {
     const m = createLcModel()
     m.init({ L: 1, C: 1 })
-    m.seek(0)
+    m.seek!(0)
     const E0 = Number(m.observe().values.E)
-    m.seek(1.5)
+    m.seek!(1.5)
     const E1 = Number(m.observe().values.E)
     expect(Math.abs(E1 - E0)).toBeLessThan(0.05)
   })

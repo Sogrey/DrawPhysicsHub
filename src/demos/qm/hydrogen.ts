@@ -4,11 +4,10 @@ import { createHydrogenAdapter } from './hydrogenAdapter'
 
 /** 氢原子径向概率密度示意 R²r²（未归一教学） */
 export function radialProb(n: number, r: number): number {
-  const rho = 2*r/n
-  if(n===1) return 4*r*r*Math.exp(-2*r)
-  if(n===2) return 0.5*r*r*(1-r/2)**2*Math.exp(-r)
-  // n=3 rough
-  return 0.2*r*r*(1-2*r/3+2*r*r/27)**2*Math.exp(-2*r/3)
+  if (n === 1) return 4 * r * r * Math.exp(-2 * r)
+  if (n === 2) return 0.5 * r * r * (1 - r / 2) ** 2 * Math.exp(-r)
+  // n=3 rough（ρ=2r/n 教学缩放已并入表达式）
+  return 0.2 * r * r * (1 - (2 * r) / 3 + (2 * r * r) / 27) ** 2 * Math.exp((-2 * r) / 3)
 }
 
 export function createHydrogenModel(): PhysicsModel {

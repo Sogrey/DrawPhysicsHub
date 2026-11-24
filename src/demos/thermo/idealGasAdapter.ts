@@ -75,7 +75,6 @@ export function createIdealGasAdapter(): DemoAdapter {
       const s = Number(snap.values.side ?? 1)
       const P = Number(snap.values.P ?? 1)
       const T = Number(snap.values.T ?? 2)
-      const n = Number(snap.values.n ?? 1)
       const V = Number(snap.values.V ?? 2)
       box.scale.set(s, s, s * 0.55)
       wall.position.set(s / 2, 0, 0)

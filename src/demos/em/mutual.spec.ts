@@ -3,9 +3,9 @@ import { createMutualModel, mutualMeta } from './mutual'
 import { resolveTMax } from '@/core/physics/types'
 describe('Mutual', () => {
   it('Vs grows with M', () => {
-    const m = createMutualModel(); m.init({M:0.5,Vp0:2,omega:2}); m.seek?.(0.4)
+    const m = createMutualModel(); m.init({M:0.5,Vp0:2,omega:2}); m.seek!(0.4)
     const a = Math.abs(Number(m.observe().values.Vs))
-    m.setParams({M:1.4}); m.seek?.(0.4)
+    m.setParams!({M:1.4}); m.seek!(0.4)
     expect(Math.abs(Number(m.observe().values.Vs))).toBeGreaterThan(a)
   })
   it('uses tMax', () => {

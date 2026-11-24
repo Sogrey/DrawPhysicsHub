@@ -1,4 +1,4 @@
-import type { DemoMeta, ObserveSnapshot, ParamValues, PhysicsModel } from '@/core/physics/types'
+import type { DemoMeta, ParamValues, PhysicsModel } from '@/core/physics/types'
 import { registerDemoBundle } from '@/core/physics/registry'
 import { createRlcAdapter } from './rlcAdapter'
 
