@@ -12,7 +12,8 @@ const root = process.cwd()
 const demosRoot = join(root, 'src', 'demos')
 const outPath = join(root, 'docs', '演示清单.md')
 const catalogPath = join(root, 'src', 'app', 'catalog', 'catalogPlan.ts')
-const capturePath = join(root, 'scripts', 'capture-covers.mjs')
+/** 封面抓取清单（与 capture-covers / save-cdp-cover 共用） */
+const capturePath = join(root, 'scripts', 'cover-demos.mjs')
 
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {

@@ -2,75 +2,79 @@
  * 抓取各演示 2D 视口截图到 public/covers/*.png
  * 用法：先 pnpm dev，再 node scripts/capture-covers.mjs
  * 环境变量：
- *   DPH_BASE          默认 http://127.0.0.1:5174/DrawPhysicsHub
+ *   DPH_BASE          默认 http://localhost:5174/DrawPhysicsHub
+ *                     （Windows 上 Vite 常只绑 [::1]，用 127.0.0.1 会连不上）
  *   DPH_COVERS_ALL=1  全量重抓（默认只补缺失）
  *   DPH_COVER_IDS     逗号分隔 id，只抓指定演示
+ *   DPH_COVER_BATCH=m7   只抓 M7（cover-demos.mjs → M7_COVER_IDS）
+ *   DPH_COVER_BATCH=m8a  只抓 M8-A（→ M8A_COVER_IDS）
+ *   DPH_COVER_BATCH=m8b  只抓 M8-B（→ M8B_COVER_IDS）
+ *   DPH_COVER_BATCH=m8c  只抓 M8-C（→ M8C_COVER_IDS）
+ *   DPH_COVER_BATCH=m8d  只抓 M8-D（→ M8D_COVER_IDS）
+ *   DPH_COVER_BATCH=m8rel 只抓 M8-Rel
+ *   DPH_COVER_BATCH=m8f   只抓 M8-F（mech+em+otq+rest）
+ *
+ * 清单来源：scripts/cover-demos.mjs（与 save-cdp-cover / list-demos 共用）
  */
 import { access } from 'node:fs/promises'
 import { mkdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+  COVER_DEMOS,
+  M7_COVER_IDS,
+  M8A_COVER_IDS,
+  M8B_COVER_IDS,
+  M8C_COVER_IDS,
+  M8D_COVER_IDS,
+  M8REL_COVER_IDS,
+  M8F_MECH_COVER_IDS,
+  M8F_EM_COVER_IDS,
+  M8F_OTQ_COVER_IDS,
+  M8F_REST_COVER_IDS,
+} from './cover-demos.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = join(root, 'public', 'covers')
-const base = process.env.DPH_BASE || 'http://127.0.0.1:5174/DrawPhysicsHub'
+const base = process.env.DPH_BASE || 'http://localhost:5174/DrawPhysicsHub'
 
-const ALL_DEMOS = [
-  { id: 'mech-projectile', subject: '力学' },
-  { id: 'mech-collision-1d', subject: '力学' },
-  { id: 'mech-harmonic', subject: '力学' },
-  { id: 'mech-damped', subject: '力学' },
-  { id: 'mech-forced', subject: '力学' },
-  { id: 'mech-pendulum', subject: '力学' },
-  { id: 'mech-circular', subject: '力学' },
-  { id: 'mech-natural-frame', subject: '力学' },
-  { id: 'mech-incline', subject: '力学' },
-  { id: 'mech-rolling', subject: '力学' },
-  { id: 'mech-rotation-axis', subject: '力学' },
-  { id: 'mech-wave-transverse', subject: '力学' },
-  { id: 'mech-standing-wave', subject: '力学' },
-  { id: 'mech-energy-curve', subject: '力学' },
-  { id: 'mech-angular-momentum', subject: '力学' },
-  { id: 'em-point-charge', subject: '电磁学' },
-  { id: 'em-potential', subject: '电磁学' },
-  { id: 'em-dipole', subject: '电磁学' },
-  { id: 'em-wire-b', subject: '电磁学' },
-  { id: 'em-loop-b', subject: '电磁学' },
-  { id: 'em-cyclotron', subject: '电磁学' },
-  { id: 'em-ampere', subject: '电磁学' },
-  { id: 'em-lenz', subject: '电磁学' },
-  { id: 'em-motional-emf', subject: '电磁学' },
-  { id: 'thermo-gas', subject: '热学' },
-  { id: 'thermo-carnot', subject: '热学' },
-  { id: 'qm-well', subject: '量子力学' },
-  { id: 'theo-coriolis', subject: '理论力学' },
-  { id: 'opt-double-slit', subject: '光学' },
-  { id: 'opt-diffraction', subject: '光学' },
-  { id: 'opt-malus', subject: '光学' },
-  { id: 'opt-waveplate', subject: '光学' },
-  { id: 'opt-refraction', subject: '光学' },
-  { id: 'opt-lens', subject: '光学' },
-  { id: 'opt-thin-film', subject: '光学' },
-  { id: 'opt-grating', subject: '光学' },
-  { id: 'opt-birefringence', subject: '光学' },
-]
+/** @deprecated 兼容旧脚本/文档提及；实际清单在 cover-demos.mjs */
+export const ALL_DEMOS = COVER_DEMOS
 
 const onlyMissing = process.env.DPH_COVERS_ALL !== '1'
+const batch = (process.env.DPH_COVER_BATCH || '').trim().toLowerCase()
 const idFilter = (process.env.DPH_COVER_IDS || '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
 
-const demos = idFilter.length
-  ? ALL_DEMOS.filter((d) => idFilter.includes(d.id))
-  : ALL_DEMOS
+let demos = COVER_DEMOS
+if (idFilter.length) {
+  demos = COVER_DEMOS.filter((d) => idFilter.includes(d.id))
+} else if (batch === 'm7') {
+  demos = COVER_DEMOS.filter((d) => M7_COVER_IDS.includes(d.id))
+} else if (batch === 'm8a') {
+  demos = COVER_DEMOS.filter((d) => M8A_COVER_IDS.includes(d.id))
+} else if (batch === 'm8b') {
+  demos = COVER_DEMOS.filter((d) => M8B_COVER_IDS.includes(d.id))
+} else if (batch === 'm8c') {
+  demos = COVER_DEMOS.filter((d) => M8C_COVER_IDS.includes(d.id))
+} else if (batch === 'm8d') {
+  demos = COVER_DEMOS.filter((d) => M8D_COVER_IDS.includes(d.id))
+} else if (batch === 'm8rel') {
+  demos = COVER_DEMOS.filter((d) => M8REL_COVER_IDS.includes(d.id))
+} else if (batch === 'm8f') {
+  const fIds = new Set([
+    ...M8F_MECH_COVER_IDS,
+    ...M8F_EM_COVER_IDS,
+    ...M8F_OTQ_COVER_IDS,
+    ...M8F_REST_COVER_IDS,
+  ])
+  demos = COVER_DEMOS.filter((d) => fIds.has(d.id))
+}
 
 async function launchBrowser(chromium) {
-  const attempts = [
-    { channel: 'chrome' },
-    { channel: 'msedge' },
-    {},
-  ]
+  const attempts = [{ channel: 'chrome' }, { channel: 'msedge' }, {}]
   let lastErr
   for (const opts of attempts) {
     try {
@@ -88,13 +92,21 @@ async function main() {
   try {
     ;({ chromium } = await import('playwright'))
   } catch {
-    console.error('未安装 playwright。可执行：pnpm add -D playwright && pnpm exec playwright install chromium')
+    console.error(
+      '未安装 playwright。可执行：pnpm add -D playwright && pnpm exec playwright install chromium',
+    )
     process.exit(1)
   }
 
   await mkdir(outDir, { recursive: true })
   const browser = await launchBrowser(chromium)
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
+
+  console.log(
+    `capture-covers: ${demos.length} demos · base=${base}` +
+      (batch ? ` · batch=${batch}` : '') +
+      (onlyMissing ? ' · only-missing' : ' · force-all'),
+  )
 
   for (const d of demos) {
     const path = join(outDir, `${d.id}.png`)
@@ -121,7 +133,6 @@ async function main() {
       await page.waitForTimeout(200)
     }
 
-    // 优先 canvas 截图；失败则用 toDataURL
     const canvas = page.locator('.viewport.dark canvas').first()
     if (await canvas.count()) {
       try {
