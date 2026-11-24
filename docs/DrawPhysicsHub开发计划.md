@@ -1,7 +1,7 @@
 # DrawPhysicsHub — 开发计划（MD / AI 端）
 
 > 关联评估：`docs/vue-threejs-物理可视化可行性评估.md`  
-> 计划版本：**v1.7** · 日期：**2026-11-23**  
+> 计划版本：**v2.0** · 日期：**2026-11-25**  
 > 原则：**参考既有教学演示意图，不 1:1 克隆第三方动态几何内核；物理模型层 + 渲染层；目标体验超越既有案例。**  
 > 人工阅读版：同名 `DrawPhysicsHub开发计划.html`（勾选进度本地保存，须与本文同步）  
 > 样板说明：抛体 Demo 为教学 UI / 助学协议参考实现，后续演示对照完善。  
@@ -14,18 +14,17 @@
 | 分期 | 周期 | 目标 | 状态 |
 |------|------|------|------|
 | **一期** | 约 10 周 | 引擎闭环 + 场景模板 + 力学/电磁/光学样板可演示可发布 | ✅ 主体完成（M6 收尾中） |
-| **二期** | 约 8 周+ | 热学/量子/近代物理扩包 + 超越能力（GPU/Worker/课程/移动端） | ⏳ 下一步 |
+| **二期** | 约 8 周+ | 热学/量子（M7✅）+ 进阶扩包（M8✅）+ 超越能力（M9） | ⏳ **M9 下一步** |
 | **Backlog** | 按需 | 作者工具、CAS、协作、商用合规等 | 按需 |
 
 ### 下一步与后期（摘要）
 
 | 阶段 | 优先事项 |
 |------|----------|
-| **立即** | Pages 抽检 + 实机 fps（[一期评审清单](./一期评审清单.md) / [性能基线](./性能基线.md)）；可选 M6-09 录屏 |
-| **近前（M7）** | 热学扩包（麦克斯韦分布等）+ 量子/原子扩包 + Worker 数值管线 |
-| **后期（M8）** | 理论力学/电动力学进阶、数物·晶格、大学物理课次包 |
-| **再后（M9）** | 移动端、对比双视图、课次进度、性能降级、投影模式等「超越能力」 |
+| **立即** | Pages 抽检 + 实机 fps；可选 M6-09 录屏；F 批体验巡检 |
+| **近前（M9）** | 移动端、对比双视图、课次进度、性能降级、投影模式等 |
 | **Backlog** | 作者工具 / LMS / CAS 等（不做通用动态几何白板） |
+| **已完成（M7/M8）** | 热学+量子；M8 A–D+Rel+F（68）+ 课次包 E；2D 视口缩放/平移 |
 
 详见 [`开发记录与路线图.md`](./开发记录与路线图.md)。
 
@@ -155,9 +154,9 @@
 
 | 里程碑 | 周期 | 任务数 | 目标 |
 |--------|------|-------:|------|
-| M7 热学与近代物理 | 3 周 | 18 | 热学+量子/原子代表包 |
-| M8 进阶科目扩包 | 3 周 | 14 | 理论力学/电动力学进阶 + 数物/晶格起步 |
-| M9 超越能力 | 2 周+ | 16 | GPU 场、Worker、课程包、移动端、批注 |
+| M7 热学与近代物理 | 3 周 | 18 | ✅ 热学 8 + 量子 8 + Worker |
+| M8 进阶科目扩包 | 3 周 | 14 | ✅ A–D+Rel+F（68）+ 课次包 E |
+| M9 超越能力 | 2 周+ | 16 | 移动端、对比双视图、性能降级、投影…（下一步） |
 | Backlog | — | 20 | 作者工具、CAS、协作等 |
 
 ---
@@ -270,11 +269,11 @@
 - ✅ 匀速圆周 `mech-circular`
 - ✅ 斜面滑块 `mech-incline`
 
-**当前计数：** 可玩 **37**（力学 15 + 电磁 9 + 光学 9 + 热学 2 + 量子 1 + 理论力学 1）；每演示均有 `*.spec.ts`；`PLANNED_SOON` 已清空。
+**当前计数：** 可玩 **50**（力学 15 + 电磁 9 + 光学 9 + 热学 8 + 量子 8 + 理论力学 1）；每演示均有 `*.spec.ts`；`PLANNED_SOON` **68** 条课题预告。
 
 **验收：** ✅ M4-A1 ≥12 演示可玩（15）；✅ M4-A2 每演示含公式与说明；✅ M4-A3 至少 3 个含自动化数值断言（现 56 项全绿）。
 
-> **M4 / M5 已完成；跨学科代表条已先行落地；M6 主体已落地。** 下一步见 [`开发记录与路线图.md`](./开发记录与路线图.md)。
+> **M4 / M5 / M7 已完成；M6 主体已落地；科里奥利为 M8 先行。** 下一步见 [`开发记录与路线图.md`](./开发记录与路线图.md)。
 
 ---
 
@@ -327,51 +326,99 @@
 
 ### M7 — 热学与近代物理（3 周）
 
-- ✅ M7-01 `T-ParticleGas` 钢球碰撞/压强示意（`thermo-gas` 先行）
-- M7-02 麦克斯韦速率分布图
-- M7-03 平均自由程 / 扩散
-- M7-04 准静态过程功（P-V）
-- ✅ M7-05 卡诺循环示意（`thermo-carnot` 先行）
-- ✅ M7-06 `T-WaveFunction` 无限深势阱（`qm-well` 先行；2D ψ/\|ψ\|²/Re + 3D 复曲线）
-- M7-07 势垒隧道概率流
-- M7-08 谐振子本征态
-- M7-09 光电效应装置示意
-- M7-10 康普顿散射几何
-- M7-11 双缝（波）示意增强
-- M7-12 α 散射轨道（Worker 数值）起步
-- M7-13 黑体辐射曲线
-- M7-14 热学包目录
-- M7-15 量子/原子包目录
-- M7-16 WebWorker 数值管线封装
-- M7-17 热学粒子性能护栏
-- M7-18 M7 抽检报告
+- ✅ M7-01 `T-ParticleGas` 钢球碰撞/压强示意（`thermo-gas`）
+- ✅ M7-02 麦克斯韦速率分布图（`thermo-maxwell`）
+- ✅ M7-03 平均自由程 / 扩散（`thermo-mfp` · `thermo-diffusion`）
+- ✅ M7-04 准静态过程功（P-V）（`thermo-pv-process`）
+- ✅ M7-05 卡诺循环示意（`thermo-carnot`）
+- ✅ M7-06 `T-WaveFunction` 无限深势阱（`qm-well`）
+- ✅ M7-07 势垒隧道概率流（`qm-barrier`）
+- ✅ M7-08 谐振子本征态（`qm-oscillator`）
+- ✅ M7-09 光电效应装置示意（`qm-photoelectric`）
+- ✅ M7-10 康普顿散射几何（`qm-compton`）
+- ✅ M7-11 双缝（波）示意增强（`qm-double-slit`）
+- ✅ M7-12 α 散射轨道（Worker 数值）起步（`qm-alpha`）
+- ✅ M7-13 黑体辐射曲线（`qm-blackbody`）
+- ✅ M7-14 热学包目录（规范 + CATEGORY_ORDER + 理想气体/熵增）
+- ✅ M7-15 量子/原子包目录（规范 + CATEGORY_ORDER）
+- ✅ M7-16 WebWorker 数值管线封装（`core/physics/worker`）
+- ✅ M7-17 热学粒子性能护栏（MAX_N）
+- ✅ M7-18 M7 抽检报告（`pnpm audit:thermo-qm`）
 
 **验收：** M7-A1 热学≥8、近代≥8；M7-A2 Worker 数值不卡主线程；M7-A3 分布/曲线与解析或教材一致。
 
 ---
 
-### M8 — 进阶科目扩包（3 周）
+### M8 — 进阶科目扩包（3 周）· ✅ 完成（2026-11-25）
 
-- ✅ M8-01 科里奥利可视化（`theo-coriolis` 先行；3D 水平转盘 `(x,y)→(x,z)`，`Ω∥Y`）
-- M8-02 双摆数值
-- M8-03 刚体进动示意
-- M8-04 电磁波传播 / 反射系数示意
-- M8-05 双折射斯涅耳作图（`opt-birefringence` 已有几何光学增补，可对照扩包）
-- M8-06 `T-ComplexSurf` 复函数 3D
-- M8-07 傅里叶级数波形重建
-- M8-08 `T-Lattice` 单原子链振动
-- M8-09 双原子链色散
-- M8-10 理论力学包目录
-- M8-11 电动力学进阶目录
-- M8-12 数物/晶格起步目录
-- M8-13 大学物理课次包 v1
-- M8-14 M8 抽检报告
+> 路线与批次表见 [开发记录与路线图.md §4.2](./开发记录与路线图.md)。`PLANNED_SOON` 已清空。  
+> 另：平台 2D 视口平移/缩放；F 批范德瓦尔斯 / 均分 / 速度合成 / 精细结构 / 衰变体验修补。
 
-**验收：** M8-A1 四进阶方向各≥3 演示；M8-A2 大学物理课次可按章节浏览。
+#### M8-A 理论力学（优先）
+
+- ✅ M8-01 科里奥利（`theo-coriolis`）
+- ✅ M8-02 双摆（`theo-double-pendulum`）
+- ✅ M8-03 刚体进动（`theo-precession`）
+- ✅ M8-03b 离心力对照（`theo-centrifugal`）
+- ✅ M8-03c 傅科摆（`theo-foucault`）
+- ✅ M8-03d 有心力轨道（`theo-central-force`）
+- ✅ M8-03e 拉格朗日珠（`theo-lagrange-bead`）
+- ✅ M8-10 理论力学包目录 / 内容规范
+
+#### M8-B 电动力学 / 光学进阶
+
+- ✅ M8-04a 电磁波传播（`em-emwave`）
+- ✅ M8-04b 反射/透射系数（`em-reflection`）
+- ✅ M8-04c 偶极辐射（`em-dipole-radiation`）
+- ✅ M8-04d 位移电流（`em-displacement`）
+- ✅ M8-05 双折射斯涅耳加深（`opt-birefringence-snell`）
+- ✅ M8-05b 布儒斯特角（`opt-brewster`）
+- ✅ M8-11 电动力学进阶目录
+
+#### M8-C 数理方法 / 晶格
+
+- ✅ M8-06 复函数曲面（`math-complex-surf`）
+- ✅ M8-07 傅里叶重建（`math-fourier`）
+- ✅ M8-07b 球谐 Yₗₘ（`math-spherical-harmonics`）
+- ✅ M8-07c 弦/膜本征模（`math-wave-modes`）
+- ✅ M8-08 单原子链（`lattice-mono`）
+- ✅ M8-09 双原子链（`lattice-di`）
+- ✅ M8-09b 石墨烯振动（`lattice-graphene`）
+- ✅ M8-12 数物/晶格起步目录
+
+#### M8-D 既有科目补洞 ✅（19）
+
+- 力学：`mech-collision-inelastic` · `mech-coupled-osc` · `mech-beats` · `mech-doppler` · `mech-physical-pendulum`
+- 电磁：`em-rc-transient` · `em-rlc` · `em-mutual` · `em-gauss`
+- 光学：`opt-michelson` · `opt-airy` · `opt-fabry-perot`
+- 热学：`thermo-conduction` · `thermo-heat-engine` · `thermo-phase`
+- 量子：`qm-finite-well` · `qm-wavepacket` · `qm-stern-gerlach` · `qm-hydrogen`
+
+#### M8-Rel 近代物理入门 ✅
+
+- ✅ `rel-minkowski` · `rel-time-dilation` · `atom-bohr`
+- ✅ `rel-velocity-add` · `atom-fine-structure` · `nuclear-decay`（F 近代；播放/3D 已修补）
+
+#### M8-F 教材高频续扩 ✅（27）
+
+- 力学：`mech-atwood` · `mech-variable-mass` · `mech-collision-2d` · `mech-phase-portrait` · `mech-bernoulli`
+- 电磁：`em-hall` · `em-lc` · `em-poynting` · `em-faraday-disk`
+- 光学：`opt-fresnel-zone` · `opt-fiber` · `opt-abbe`
+- 热学：`thermo-vanderwaals` · `thermo-otto` · `thermo-equipartition`
+- 量子：`qm-rabi` · `qm-tunnel-diode` · `qm-variational`
+- 理论：`theo-euler-angles` · `theo-tennis-racket` · `theo-hamilton-phase`
+- 数理：`math-bessel` · `math-legendre` · `math-green`
+
+#### M8-E 课次与抽检
+
+- ✅ M8-13 大学物理课次包 v1（`coursePack.ts` + 首页「课次包」浏览 + 演示页上下节）
+- ✅ M8-14 M8 抽检报告（`docs/M8抽检报告.md`；`pnpm audit:m8`）
+
+**验收：** ✅ M8-A1 四进阶方向各≥3 演示；✅ M8-A2 大学物理课次可按章节浏览。
 
 ---
 
-### M9 — 超越能力（2 周+）
+### M9 — 超越能力（2 周+）· 📋 下一步
 
 - M9-01 GPU/着色器场线或密度（可选）
 - M9-02 对比双视图完善（经典 vs 相对论 / 线偏振 vs 圆偏振）
@@ -442,4 +489,4 @@
 
 ---
 
-*v1.7 · 2026-11-23 · 一期主体完成 · 可玩 37 · 下一步 Pages/fps 收尾 → M7 · 路线图见「开发记录与路线图.md」*
+*v2.0 · 2026-11-25 · M8 完成 · 可玩 118 · 2D 视口缩放/平移 · 下一步 M9 · 路线图见「开发记录与路线图.md」*

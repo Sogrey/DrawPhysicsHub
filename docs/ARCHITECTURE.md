@@ -40,9 +40,9 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 
 | 层 | 复用 |
 |----|------|
-| Vue | `app/components/demo/*`：参数台 / 播放条 / 读数 / 解析 / 挑战 / 图例 / Tabs / Three HUD |
+| Vue | `app/components/demo/*`：参数台 / 播放条 / 读数 / 解析 / 挑战 / 图例 / Tabs / `ThreeViewHud` / `Canvas2DHud` |
 | Composable | `useDemoModel` · `useSimPlayback` · `usePedagogy` · `useCanvas2DView` · `useThreeView` · `useCompareTrail` · `useDemoCharts` |
-| 渲染原语 | `primitives2d` / `primitives3d` / `particle3d` / `chart2d` |
+| 渲染原语 | `primitives2d` / `primitives3d` / `particle3d` / `chart2d`；`createCanvas2DHost`（平移/缩放）· `createThreeHost`（轨道/平移） |
 | Demo 专用 | `demos/<subject>/`：model + adapter + render* + meta |
 
 `DemoPlayer` 只负责组装壳 + 通过 **Adapter**（`meta.adapter` → `registerAdapter`）挂接 paint / setup3d / buildCompare；不 import 具体 demo。`features.compare|scrub|charts` 控制能力；对比图例用 `legend.id` / `features.compareLegendId`。
@@ -59,13 +59,13 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 3. 专用画面放同目录 `render*.ts`
 4. 用 `registerDemoBundle({ model, adapter, meta })`（或分别 `registerModel` / `registerAdapter` / `registerDemo`），并在 `demos/index.ts` 调用
 5. （可选）极限行为与挑战 `*.spec.ts`
-6. （可选）在 `LIVE_COVERS` 登记封面，并把截图放到 `public/covers/<id>.png`（可用 `scripts/capture-covers.mjs`）  
+6. （可选）在 `LIVE_COVERS` 登记封面，并把截图放到 `public/covers/<id>.png`；同步 `scripts/cover-demos.mjs`（`capture-covers.mjs` / `save-cdp-cover.mjs` 共用）  
    实操与踩坑见 [演示开发经验与封面截图.md](./演示开发经验与封面截图.md)
 7. **勿改** `DemoPlayer.vue`；复用壳与 `components/demo/*`
 
 ## 已注册演示（摘要 · 详见根 README）
 
-力学 15 条（`demos/mechanics/`，样板 `mech-projectile`）+ 电磁 9 + 光学 9 + 热学 2 + 量子 1 + 理论力学 1 = **37**。注册入口：`demos/index.ts`。
+力学 15 条（`demos/mechanics/`，样板 `mech-projectile`）+ 电磁 9 + 光学 9 + 热学 8 + 量子 8 + 理论力学 1 = **50**。注册入口：`demos/index.ts`。
 
 | 学科 | 代表 id | 目录 |
 |------|---------|------|
@@ -79,7 +79,7 @@ core/render   渲染层：Canvas2D / Three.js / Chart 适配器（坐标系、�
 2D 图注约定：优先用 `primitives2d` 的 `drawAngleMark` / `drawDimLine` / `drawDiagramLabel`，避免与轴线/轨迹/顶栏 HUD 压线。  
 3D 标签可用 `primitives3d.createTextSprite`。水平转盘类：物理 `(x,y)` → 场景 `(x,z)`，`Ω∥+Y`（见《演示开发经验》）。
 
-进度与后期计划：[`开发记录与路线图.md`](./开发记录与路线图.md)（v1.7）。
+进度与后期计划：[`开发记录与路线图.md`](./开发记录与路线图.md)（v1.8）。
 
 ## 禁止事项
 
