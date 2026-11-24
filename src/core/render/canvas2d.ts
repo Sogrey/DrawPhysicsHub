@@ -13,8 +13,9 @@ const ZOOM_MIN = 0.4
 const ZOOM_MAX = 8
 
 export function createCanvas2DHost(el: HTMLCanvasElement): Canvas2DHost {
-  const ctx = el.getContext('2d')
-  if (!ctx) throw new Error('2D context unavailable')
+  const ctxOrNull = el.getContext('2d')
+  if (!ctxOrNull) throw new Error('2D context unavailable')
+  const ctx: CanvasRenderingContext2D = ctxOrNull
 
   let zoom = 1
   let panX = 0
