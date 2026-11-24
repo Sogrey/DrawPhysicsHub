@@ -29,8 +29,12 @@ pnpm list:demos   # 生成 docs/演示清单.md 并核对封面
 | [`docs/DrawPhysicsHub开发计划.html`](docs/DrawPhysicsHub开发计划.html) | 同上，可勾选进度（本地保存） |
 | [`docs/vue-threejs-物理可视化可行性评估.md`](docs/vue-threejs-物理可视化可行性评估.md) | Vue+Three 可行性与架构结论 |
 | [`docs/组件复用拆分.md`](docs/组件复用拆分.md) | Adapter 化与可复用组件 / composable 清单 |
+| [`docs/热学内容规范.md`](docs/热学内容规范.md) | 热学包命名 / 分类 / 验收 |
+| [`docs/量子内容规范.md`](docs/量子内容规范.md) | 量子·近代包命名 / 分类 / 验收 |
+| [`docs/热学量子抽检报告.md`](docs/热学量子抽检报告.md) | M7 抽检记录 |
+| [`docs/M8抽检报告.md`](docs/M8抽检报告.md) | M8 进阶扩包抽检（`pnpm audit:m8`） |
 
-## 当前进度（2026-11-23 · 计划 v1.7）
+## 当前进度（2026-11-25 · 计划 v2.0）
 
 | 里程碑 | 状态 |
 |--------|------|
@@ -39,19 +43,22 @@ pnpm list:demos   # 生成 docs/演示清单.md 并核对封面
 | **M3 场景模板** | ⏳ 未单独立项；能力已以 Adapter + 渲染原语形式沉淀 |
 | **M4 力学样板包** | ✅ **完成**（15 可玩 + [内容规范](docs/力学内容规范.md) + [抽检报告](docs/力学包抽检报告.md) 56/56） |
 | **M5 电磁/光学** | ✅ **完成**（18 演示 + 目录/场密度/公式对照/3D 相机 + [抽检](docs/电磁光学抽检报告.md)） |
-| **跨学科代表条** | ✅ 热学 2 · 量子 1 · 理论力学 1（`PLANNED_SOON` 已清空） |
 | **M6 发布验收** | ✅ 主体完成（见下；Pages/fps 收尾中） |
+| **M7 热学与近代物理** | ✅ **完成**（热学 8 + 量子 8 + Worker 管线 + [规范](docs/热学内容规范.md)/[抽检](docs/热学量子抽检报告.md)） |
+| **理论力学代表** | ✅ `theo-coriolis`（M8 先行） |
+| **M8 进阶扩包** | ✅ A–D + Rel + F（68）+ 课次包 E + [抽检](docs/M8抽检报告.md) |
 
-**可玩合计：37**（力学 15 + 电磁 9 + 光学 9 + 热学 2 + 量子 1 + 理论力学 1）。
+**可玩合计：118**（含 M8）；`PLANNED_SOON` 已清空。M8 已收口，下一步 **M9**。
 
 ### 平台能力（相对抛体样板）
 
 - 三栏教学壳 + `DemoAdapter`：新增演示只改 `demos/` + 注册，**不改** `DemoPlayer.vue`
 - 目录：`app/catalog` 学科→分类树 + 搜索/标签；已实现用 `public/covers/*.png`，未实现「敬请期待」用通用 `placeholder.svg`（路径经 `publicAsset` 拼 Vite `base`）
-- 多学科：电磁 / 光学 / 热学 / 量子 / 理论力学代表条已落地；`PLANNED_SOON` 可继续挂后续预告；分类序 `CATEGORY_ORDER`
+- 多学科：电磁 / 光学 / 热学 / 量子 / 理论力学 / 数物·晶格 / 近代物理已落地；分类序 `CATEGORY_ORDER`；首页「课次包」浏览
 - `tMax` 协议、`pedagogy` 去抛体化、对比轨迹 / 图例 id、纵向堆叠曲线随 \(t\) 揭示
-- 2D 图上参数标注（角度弧 / 尺寸线 / 标签）、3D 平移取景；演示全屏 / 可选 FPS
-- 3D 文字精灵 `createTextSprite`（`primitives3d`）；水平转盘类演示物理 `(x,y)` → 场景 `(x,z)`、`Ω∥Y`
+- **2D 视口**：拖拽平移 · 滚轮缩放 · 双击/「重置视角」复位（`createCanvas2DHost` + `Canvas2DHud`）
+- **3D 视口**：拖拽旋转 · 右键/Shift 平移 · 滚轮缩放（`ThreeViewHud`）；演示全屏 / 可选 FPS
+- 2D 图上参数标注（角度弧 / 尺寸线 / 标签）；3D 文字精灵 `createTextSprite`；水平转盘类 `(x,y)→(x,z)`、`Ω∥Y`
 
 ### 已注册力学演示（15）
 
@@ -98,23 +105,51 @@ M4 已完成。复验：`pnpm test:mechanics` / `pnpm audit:mechanics`。封面�
 | `opt-grating` | 光栅衍射 | 衍射增补 ✅ |
 | `opt-birefringence` | 双折射光路 | 偏振增补 ✅ |
 
-### 热学 / 量子 / 理论力学（代表条）
+### M7 热学（8） / 量子·近代（8）
 
 | id | 名称 | 状态 |
 |----|------|------|
-| `thermo-gas` | 分子碰撞与压强示意 | 热学首条 ✅（对应 M7-01 先行） |
-| `thermo-carnot` | 卡诺循环 P–V 图 | 热学增补 ✅（对应 M7-05 先行） |
-| `qm-well` | 一维无限深势阱 | 量子代表 ✅（对应 M7-06 先行） |
-| `theo-coriolis` | 科里奥利力示意 | 理论力学代表 ✅（对应 M8-01 先行） |
+| `thermo-gas` | 分子碰撞与压强示意 | M7-01 ✅ |
+| `thermo-maxwell` | 麦克斯韦速率分布 | M7-02 ✅ |
+| `thermo-mfp` | 平均自由程 | M7-03 ✅ |
+| `thermo-pv-process` | 准静态过程功（P–V） | M7-04 ✅ |
+| `thermo-carnot` | 卡诺循环 P–V 图 | M7-05 ✅ |
+| `thermo-diffusion` | 扩散与均方位移 | 输运增补 ✅ |
+| `thermo-ideal-gas` | 理想气体定律对照 | 状态方程 ✅ |
+| `thermo-entropy` | 自由膨胀与熵增 | 熵与不可逆 ✅ |
+| `qm-well` | 一维无限深势阱 | M7-06 ✅ |
+| `qm-barrier` | 势垒隧道 | M7-07 ✅ |
+| `qm-oscillator` | 谐振子本征态 | M7-08 ✅ |
+| `qm-photoelectric` | 光电效应 | M7-09 ✅ |
+| `qm-compton` | 康普顿散射 | M7-10 ✅ |
+| `qm-double-slit` | 电子双缝干涉示意 | M7-11 ✅ |
+| `qm-alpha` | α 散射轨道（Worker） | M7-12 ✅ |
+| `qm-blackbody` | 黑体辐射曲线 | M7-13 ✅ |
+| `theo-coriolis` | 科里奥利力示意 | M8-01 先行 ✅ |
 
 **呈现约定（摘要）**
 
-- `qm-well`：2D 为 ψₙ / \|ψ\|² / Reψ(t) + 顶栏位相钟；3D 为复曲线 `(x,Re,Im)`，\|ψ\|² 侧立剖面。
-- `theo-coriolis`：2D 俯视转盘，`a_cor⊥v` 直角标；3D **水平转盘**（物理 `(x,y)`→场景 `(x,z)`，`Ω∥+Y`），盘与辐条同一 Group 绕 Y 转。
+- `qm-well`：2D 为 ψₙ / \|ψ\|² / Reψ(t) + 顶栏位相钟；3D 为复曲线 `(x,Re,Im)`。
+- `qm-alpha`：卢瑟福数值轨道；`core/physics/worker` 协议 + 默认同步后备。
+- `theo-coriolis`：3D 水平转盘 `(x,y)`→`(x,z)`，`Ω∥+Y`。
 
-目录规范：[`docs/电磁内容规范.md`](docs/电磁内容规范.md) · [`docs/光学内容规范.md`](docs/光学内容规范.md)  
-抽检：`pnpm test:em` / `pnpm test:optics` / `pnpm audit:em-optics`  
-`PLANNED_SOON` 已清空（代表学科首条均已落地）。
+规范：[`docs/热学内容规范.md`](docs/热学内容规范.md) · [`docs/量子内容规范.md`](docs/量子内容规范.md)  
+抽检：`pnpm test:thermo` / `pnpm test:qm` / `pnpm audit:thermo-qm`  
+### M8 进阶扩包（A–D + Rel + F + 课次包 E ✅）
+
+`PLANNED_SOON` 已清空；首页可切换「课次包」按章节浏览。抽检：`pnpm audit:m8` → [M8抽检报告](docs/M8抽检报告.md)。
+
+| 批次 | 内容 | 条数 | 状态 |
+|:----:|------|:----:|:----:|
+| **A** | 理论力学（双摆/进动/傅科/有心力…） | 6 | ✅ |
+| **B** | 电磁波 / 偶极辐射 / 布儒斯特… | 6 | ✅ |
+| **C** | 傅里叶 / 球谐 / 晶格 / 石墨烯… | 7 | ✅ |
+| **D** | 六科补洞（耦合振子、RLC、艾里斑、热传导、波包…） | 19 | ✅ |
+| **Rel** | 闵氏图 / 时胀 / 玻尔 | 3 | ✅ |
+| **F** | 教材续扩（阿特伍德、霍尔、光纤、拉比、衰变…） | 27 | ✅ |
+| **E** | 课次包 v1 + [抽检报告](docs/M8抽检报告.md) | — | ✅ |
+
+完整 id 表：[docs/开发记录与路线图.md](docs/开发记录与路线图.md) §4.2。
 
 ### M6 发布（主体完成）
 
@@ -137,10 +172,8 @@ M4 已完成。复验：`pnpm test:mechanics` / `pnpm audit:mechanics`。封面�
 
 | 阶段 | 内容 |
 |------|------|
-| **立即** | Pages 抽检 + 实机 fps；可选短录屏（M6-09） |
-| **近前 M7** | 热学 / 量子·原子扩包 + Worker 数值 |
-| **后期 M8** | 理论力学 / 电动力学进阶、晶格、课次包 |
-| **再后 M9** | 移动端、对比双视图、性能降级、投影模式等 |
+| **立即** | Pages 抽检 + 实机 fps；可选短录屏；F 批体验巡检（取景/播放驱动） |
+| **近前 M9** | 移动端手势与布局、对比双视图、性能自动降级、投影模式、课次进度等 |
 | **Backlog** | 作者工具 / LMS 等（不做通用动态几何白板） |
 
 完整开发记录与路线：[docs/开发记录与路线图.md](docs/开发记录与路线图.md)。

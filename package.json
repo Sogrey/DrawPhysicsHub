@@ -18,8 +18,12 @@
     "test:mechanics": "vitest run src/demos/mechanics",
     "test:em": "vitest run src/demos/em",
     "test:optics": "vitest run src/demos/optics",
+    "test:thermo": "vitest run src/demos/thermo",
+    "test:qm": "vitest run src/demos/qm",
     "audit:mechanics": "node scripts/audit-mechanics.mjs",
     "audit:em-optics": "node scripts/audit-em-optics.mjs",
+    "audit:thermo-qm": "node scripts/audit-thermo-qm.mjs",
+    "audit:m8": "node scripts/audit-m8.mjs",
     "list:demos": "node scripts/list-demos.mjs",
     "typecheck": "vue-tsc -b --pretty false"
   },
