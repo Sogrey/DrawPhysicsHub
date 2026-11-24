@@ -170,7 +170,7 @@ export interface DemoReadoutDef {
   key: string
   label: string
   unit?: string
-  tone?: 'cyan' | 'green' | 'blue' | 'purple' | 'amber' | 'slate'
+  tone?: 'cyan' | 'green' | 'blue' | 'purple' | 'amber' | 'slate' | 'pink'
   digits?: number
 }
 

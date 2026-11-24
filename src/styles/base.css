@@ -837,6 +837,10 @@ body,
 .readout-list .row[data-tone='purple'] dd {
   color: #c4b5fd;
 }
+.readout-list .row[data-tone='pink'] dd {
+  color: #f9a8d4;
+}
+
 .readout-list .row[data-tone='amber'] dd {
   color: #fbbf24;
 }
