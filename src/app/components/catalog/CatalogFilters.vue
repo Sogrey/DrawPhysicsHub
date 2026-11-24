@@ -7,12 +7,15 @@ defineProps<{
   tag: string
   subjects: string[]
   tags: string[]
+  onlyNew: boolean
+  newCount: number
 }>()
 
 const emit = defineEmits<{
   'update:q': [string]
   'update:subject': [string]
   'update:tag': [string]
+  'update:onlyNew': [boolean]
 }>()
 </script>
 
@@ -38,6 +41,18 @@ const emit = defineEmits<{
           <option v-for="s in subjects" :key="s" :value="s">{{ s }}</option>
         </select>
       </label>
+      <button
+        v-if="newCount > 0"
+        type="button"
+        class="catalog-new-toggle"
+        :class="{ active: onlyNew }"
+        :title="t('catalog.newHint')"
+        :aria-pressed="onlyNew"
+        @click="emit('update:onlyNew', !onlyNew)"
+      >
+        {{ t('catalog.onlyNew') }}
+        <span class="catalog-new-toggle-count">{{ newCount }}</span>
+      </button>
     </div>
     <div class="catalog-tags" role="list">
       <button

@@ -22,6 +22,7 @@ import ViewTabs from './demo/ViewTabs.vue'
 import DemoConsoleHeader from './demo/DemoConsoleHeader.vue'
 import DocsView from './demo/DocsView.vue'
 import ThreeViewHud from './demo/ThreeViewHud.vue'
+import Canvas2DHud from './demo/Canvas2DHud.vue'
 
 const props = defineProps<{ meta: DemoMeta }>()
 
@@ -49,6 +50,8 @@ const {
   resize: resizeCanvas2d,
   dispose: disposeCanvas2d,
   getHost: getCanvas2dHost,
+  setOnViewChange: setCanvas2dOnViewChange,
+  resetView: resetCanvas2dView,
 } = useCanvas2DView()
 
 const {
@@ -296,6 +299,7 @@ onMounted(() => {
     if (!adapter) throw new Error(`未注册适配器: ${adapterId}`)
     modelApi.defaultsFromMeta()
     modelApi.ensureModel()
+    setCanvas2dOnViewChange(() => paint())
     setupActiveView(activeView.value)
     paint()
   } catch (e) {
@@ -415,6 +419,7 @@ onUnmounted(() => {
       <div v-if="view2dId" class="viewport dark" v-show="activeView === view2dId">
         <canvas ref="canvas2dEl"></canvas>
         <HudLegend :items="displayLegend" />
+        <Canvas2DHud @reset-view="resetCanvas2dView" />
       </div>
 
       <div v-if="view3dId" class="viewport dark" v-show="activeView === view3dId">

@@ -32,13 +32,14 @@ function onImgError() {
   <component
     :is="item.status === 'live' ? 'router-link' : 'div'"
     class="catalog-card"
-    :class="{ soon: item.status === 'soon' }"
+    :class="{ soon: item.status === 'soon', 'is-new': item.isNew }"
     :to="
       item.status === 'live'
         ? `/s/${encodeURIComponent(item.subject)}/${item.id}`
         : undefined
     "
     :aria-disabled="item.status === 'soon' ? 'true' : undefined"
+    :data-new="item.isNew ? 'true' : undefined"
   >
     <div class="catalog-thumb" :data-tone="item.tone" aria-hidden="true">
       <img
@@ -68,6 +69,11 @@ function onImgError() {
         <circle cx="56" cy="40" r="4.5" fill="currentColor" opacity="0.9" />
       </svg>
       <span v-if="item.status === 'soon'" class="catalog-badge">{{ t('catalog.soon') }}</span>
+      <span
+        v-else-if="item.isNew"
+        class="catalog-badge catalog-badge-new"
+        :title="t('catalog.newHint')"
+      >{{ t('catalog.new') }}</span>
     </div>
     <div class="catalog-card-body">
       <strong class="catalog-card-title">{{ item.title }}</strong>

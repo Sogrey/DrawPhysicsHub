@@ -3,11 +3,14 @@ import { publicAsset } from './assetUrl'
 import {
   CATEGORY_ORDER,
   LIVE_COVERS,
+  NEW_DEMO_IDS,
   PLACEHOLDER_COVER,
   PLANNED_SOON,
   SUBJECT_ORDER,
   type PlannedEntry,
 } from './catalogPlan'
+
+const NEW_DEMO_ID_SET = new Set(NEW_DEMO_IDS)
 
 export interface CatalogItem {
   id: string
@@ -17,6 +20,8 @@ export interface CatalogItem {
   summary?: string
   tags: string[]
   status: 'live' | 'soon'
+  /** 新近落地：目录「NEW」角标，便于专项抽检 */
+  isNew?: boolean
   /** 封面 URL；live 无图时用分类占位 */
   cover?: string
   tone: string
@@ -39,6 +44,8 @@ export interface CatalogFilter {
   subject?: string | null
   /** 默认 true：目录含「敬请期待」；false 仅已实现 */
   includeSoon?: boolean
+  /** true：只保留 NEW_DEMO_IDS（专项抽检） */
+  onlyNew?: boolean
 }
 
 export function thumbTone(category: string, subject?: string): string {
@@ -58,6 +65,8 @@ export function thumbTone(category: string, subject?: string): string {
   if (subject === '热学') return 'thermo'
   if (subject === '量子力学') return 'qm'
   if (subject === '理论力学') return 'theo'
+  if (subject === '近代物理') return 'qm'
+  if (subject === '数理方法') return 'osc'
   if (category.includes('振动')) return 'osc'
   if (category.includes('刚体')) return 'rigid'
   if (category.includes('动量')) return 'momentum'
@@ -85,6 +94,7 @@ function fromMeta(d: DemoMeta): CatalogItem {
     summary: d.docs.summary,
     tags: d.tags ?? [],
     status: 'live',
+    isNew: NEW_DEMO_ID_SET.has(d.id),
     cover: publicAsset(cover),
     tone: thumbTone(d.category, d.subject),
   }
@@ -98,6 +108,7 @@ function fromPlanned(p: PlannedEntry): CatalogItem {
     title: p.title,
     tags: p.tags ?? [],
     status: 'soon',
+    isNew: false,
     cover: publicAsset(PLACEHOLDER_COVER),
     tone: thumbTone(p.category, p.subject),
   }
@@ -146,6 +157,7 @@ export function buildDemoTree(items: CatalogItem[]): CatalogSubject[] {
       name,
       items: [...(cats.get(name) ?? [])].sort((a, b) => {
         if (a.status !== b.status) return a.status === 'live' ? -1 : 1
+        if (!!a.isNew !== !!b.isNew) return a.isNew ? -1 : 1
         return a.title.localeCompare(b.title, 'zh')
       }),
     }))
@@ -159,9 +171,11 @@ export function filterCatalog(items: CatalogItem[], filter: CatalogFilter): Cata
   const tag = filter.tag?.trim() || null
   const subject = filter.subject?.trim() || null
   const includeSoon = filter.includeSoon !== false
+  const onlyNew = filter.onlyNew === true
 
   return items.filter((d) => {
     if (!includeSoon && d.status === 'soon') return false
+    if (onlyNew && !d.isNew) return false
     if (subject && d.subject !== subject) return false
     if (tag && !d.tags.includes(tag)) return false
     if (!q) return true
